@@ -1,14 +1,14 @@
 server:
   port: 8003
 hiu:
-  id: 10000002
+  id: SUKREET_124235
   name: Max Health Care
   dataPushUrl: http://localhost:8003/data/notification
   valueSets: classpath:/static/ValueSet/ncg-valuesets.json
   disableHttpOptionsMethod: false
   hfrAffinityDomains: facilitysbx.ndhm.gov.in
   consentmanager:
-    suffix: '@ncg'
+    suffix: '@sbx'
     url: http://localhost:9000
   dataflowservice:
     defaultPageSize: 20
@@ -18,7 +18,7 @@ hiu:
     dataFlowRequestWaitTime: 1
     dataPartWaitTime: 1
   userservice:
-    jwkUrl: http://localhost:9001/auth/realms/consent-manager/protocol/openid-connect/certs
+    jwkUrl: https://dev.ndhm.gov.in/gateway/v0.5/certs
   consentservice:
     consentRequestFromYears: 7
     consentExpiryInMonths: 2
@@ -45,11 +45,11 @@ hiu:
     user: orthanc
     password: orthanc
   gatewayservice:
-    baseUrl: http://localhost:8000/v0.5
+    baseUrl: https://dev.ndhm.gov.in/gateway/v0.5
     requestTimeout: 2000
-    clientId: 10000002
-    clientSecret: ${CLIENT_SECRET}
-    jwkUrl: http://localhost:8000/v0.5/certs
+    clientId: SUKREET_124235
+    clientSecret: a907a884-ec8f-4040-bb6c-226749cc1874
+    jwkUrl: https://dev.ndhm.gov.in/gateway/v0.5/certs
 keystore:
   file-path: "phiu-local-keystore.p12"
   password: password

@@ -777,33 +777,33 @@ public class HiuConfiguration {
         return new DefaultJWTProcessor<>();
     }
 
-    @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "true", matchIfMissing = true)
-    @Bean("userAuthenticator")
-    public Authenticator userAuthenticator(IdentityServiceProperties identityServiceProperties,
-                                           ConfigurableJWTProcessor<SecurityContext> jwtProcessor) throws IOException, ParseException {
-        var jwkSet = JWKSet.load(new URL(identityServiceProperties.getJwkUrl()));
-        return new CMPatientAuthenticator(jwkSet, jwtProcessor);
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "false")
-    public IdentityProvider externalIdentityProvider(@Qualifier("customBuilder") WebClient.Builder builder,
-                                                     IDPProperties idpProperties) {
-        return new ExternalIdentityProvider(builder, idpProperties);
-    }
-
-    @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "false")
-    @Bean("userAuthenticator")
-    public Authenticator cmAccountServiceTokenAuthenticator(IdentityProvider identityProvider,
-                                                            CacheAdapter<String, String> blockListedTokens)
-            throws InvalidKeySpecException, NoSuchAlgorithmException {
-        String certificate = identityProvider.fetchCertificate().block();
-        var kf = KeyFactory.getInstance("RSA");
-        var keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(certificate));
-        RSASSAVerifier tokenVerifier = new RSASSAVerifier((RSAPublicKey) kf.generatePublic(keySpecX509));
-
-        return new ExternalIDPOfflineAuthenticator(tokenVerifier, blockListedTokens);
-    }
+//    @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "true", matchIfMissing = true)
+//    @Bean("userAuthenticator")
+//    public Authenticator userAuthenticator(IdentityServiceProperties identityServiceProperties,
+//                                           ConfigurableJWTProcessor<SecurityContext> jwtProcessor) throws IOException, ParseException {
+//        var jwkSet = JWKSet.load(new URL(identityServiceProperties.getJwkUrl()));
+//        return new CMPatientAuthenticator(jwkSet, jwtProcessor);
+//    }
+//
+//    @Bean
+//    @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "false")
+//    public IdentityProvider externalIdentityProvider(@Qualifier("customBuilder") WebClient.Builder builder,
+//                                                     IDPProperties idpProperties) {
+//        return new ExternalIdentityProvider(builder, idpProperties);
+//    }
+//
+//    @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "false")
+//    @Bean("userAuthenticator")
+//    public Authenticator cmAccountServiceTokenAuthenticator(IdentityProvider identityProvireadmeder,
+//                                                            CacheAdapter<String, String> blockListedTokens)
+//            throws InvalidKeySpecException, NoSuchAlgorithmException {
+//        String certificate = identityProvider.fetchCertificate().block();
+//        var kf = KeyFactory.getInstance("RSA");
+//        var keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(certificate));
+//        RSASSAVerifier tokenVerifier = new RSASSAVerifier((RSAPublicKey) kf.generatePublic(keySpecX509));
+//
+//        return new ExternalIDPOfflineAuthenticator(tokenVerifier, blockListedTokens);
+//    }
 
     @Bean
     public ReactorClientHttpConnector reactorClientHttpConnector() {

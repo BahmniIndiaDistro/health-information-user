@@ -120,16 +120,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityContextRepository contextRepository(GatewayTokenVerifier gatewayTokenVerifier,
                                                        @Qualifier("hiuUserAuthenticator") Authenticator authenticator,
-                                                       @Qualifier("userAuthenticator") Authenticator userAuthenticator,
+//                                                       @Qualifier("userAuthenticator") Authenticator userAuthenticator,
                                                        @Value("${hiu.authorization.header}") String authHeader) {
-        return new SecurityContextRepository(gatewayTokenVerifier, authenticator, userAuthenticator, authHeader);
+        return new SecurityContextRepository(gatewayTokenVerifier, authenticator, authHeader);
     }
 
     @AllArgsConstructor
     private static class SecurityContextRepository implements ServerSecurityContextRepository {
         private final GatewayTokenVerifier gatewayTokenVerifier;
         private final Authenticator authenticator;
-        private final Authenticator userAuthenticator;
         private final String authHeader;
         private static final Logger logger = getLogger(SecurityContextRepository.class);
 
@@ -146,12 +145,12 @@ public class SecurityConfiguration {
                 return empty();
             }
 
-            if (isCMPatientRequest(path, exchange.getRequest().getMethod())) {
-                var patientToken = exchange.getRequest().getHeaders().getFirst(authHeader);
-                return isEmpty(patientToken)
-                        ? error(unauthorizedRequester())
-                        : checkUserToken(patientToken).switchIfEmpty(error(unauthorizedRequester()));
-            }
+//            if (isCMPatientRequest(path, exchange.getRequest().getMethod())) {
+//                var patientToken = exchange.getRequest().getHeaders().getFirst(authHeader);
+//                return isEmpty(patientToken)
+//                        ? error(unauthorizedRequester())
+//                        : checkUserToken(patientToken).switchIfEmpty(error(unauthorizedRequester()));
+//            }
 
             var token = exchange.getRequest().getHeaders().getFirst(AUTHORIZATION);
 
@@ -171,11 +170,11 @@ public class SecurityConfiguration {
             return of(ALLOWED_LISTS).anyMatch(pattern -> antPathMatcher.matchStart(pattern, path));
         }
 
-        private Mono<SecurityContext> checkUserToken(String token) {
-            return userAuthenticator.verify(token)
-                    .map(caller -> new UsernamePasswordAuthenticationToken(caller, token, new ArrayList<>()))
-                    .map(SecurityContextImpl::new);
-        }
+//        private Mono<SecurityContext> checkUserToken(String token) {
+//            return userAuthenticator.verify(token)
+//                    .map(caller -> new UsernamePasswordAuthenticationToken(caller, token, new ArrayList<>()))
+//                    .map(SecurityContextImpl::new);
+//        }
 
         private Mono<SecurityContext> check(String token) {
             return authenticator.verify(token)
