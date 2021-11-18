@@ -47,6 +47,7 @@ public class GatewayServiceClient {
     }
 
     public Mono<Void> sendConsentRequest(String cmSuffix, ConsentRequest request) {
+        logger.warn("gateway " + gateway.token());
         return gateway.token()
                 .flatMap(token -> webClient
                         .post()
