@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -113,6 +114,9 @@ public class ConsentService {
             UUID gatewayRequestId) {
         var reqInfo = hiRequest.getConsent().to(requesterId, hiuProperties.getId(), conceptValidator);
         var patientId = hiRequest.getConsent().getPatient().getId();
+        logger.warn("sendConsentRequestToGateway");
+        logger.warn("now(IST) " + now(ZoneId.of("Asia/Calcutta")));
+        logger.warn("now() " + now());
         var consentRequest = ConsentRequest.builder()
                 .requestId(gatewayRequestId)
                 .timestamp(now(UTC))

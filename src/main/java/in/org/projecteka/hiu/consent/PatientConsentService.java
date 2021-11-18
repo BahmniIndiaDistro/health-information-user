@@ -22,10 +22,12 @@ import in.org.projecteka.hiu.dataflow.model.DataRequestStatus;
 import in.org.projecteka.hiu.dataflow.model.PatientDataRequestDetail;
 import in.org.projecteka.hiu.dataflow.model.PatientHealthInfoStatus;
 import lombok.AllArgsConstructor;
+import org.apache.log4j.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +36,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static in.org.projecteka.hiu.ErrorCode.INVALID_PURPOSE_OF_USE;
@@ -58,6 +59,7 @@ public class PatientConsentService {
     private final GatewayServiceClient gatewayServiceClient;
     private BiFunction<List<String>, String, Flux<PatientHealthInfoStatus>> healthInfoStatus;
     private final PatientHIUCertService patientHIUCertService;
+    private final Logger logger = Logger.getLogger(PatientConsentService.class);
 
     public Mono<List<Map<String, Object>>> getLatestCareContextResourceDates(String patientId, String hipId) {
         return patientConsentRepository.getLatestResourceDateByHipCareContext(patientId, hipId);
@@ -124,6 +126,10 @@ public class PatientConsentService {
 
     private Mono<ConsentRequestData> handleForReloadConsent(String patientId, String hipId) {
         LocalDateTime now = now(UTC);
+        logger.warn("handleForReloadConsent");
+        logger.warn("now(IST) " + now(ZoneId.of("Asia/Calcutta")));
+        logger.warn("now() " + now());
+        logger.warn("now " + now);
 
         return patientConsentRepository.deletePatientConsentRequestFor(patientId)
                 .flatMap(patientConsentRepository::deleteConsentRequestFor)
