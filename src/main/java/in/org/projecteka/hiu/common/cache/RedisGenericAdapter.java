@@ -8,7 +8,9 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.time.ZoneId;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static java.lang.String.format;
 import static java.time.Duration.ofMinutes;
 import static java.time.LocalDateTime.now;
@@ -50,7 +52,7 @@ public class RedisGenericAdapter<T> implements CacheAdapter<String, T> {
                 .doOnError(error -> logger.error(error.getMessage(), error))
                 .retryWhen(Retry
                         .backoff(retry, Duration.ofMillis(100)).jitter(0d)
-                        .doAfterRetry(rs -> logger.error(RETRIED_AT, now()))
+                        .doAfterRetry(rs -> logger.error(RETRIED_AT, now(ZoneId.of(IST))))
                         .onRetryExhaustedThrow((spec, rs) -> rs.failure()));
     }
 

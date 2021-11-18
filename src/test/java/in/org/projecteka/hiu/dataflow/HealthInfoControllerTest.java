@@ -36,13 +36,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.Constants.API_PATH_FETCH_PATIENT_HEALTH_INFO;
 import static in.org.projecteka.hiu.common.Constants.API_PATH_GET_HEALTH_INFO_STATUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -281,7 +282,7 @@ class HealthInfoControllerTest {
         ArgumentCaptor<Set<String>> dataRequestIdsCaptor = ArgumentCaptor.forClass(Set.class);
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .consentRequestId(null)
-                .patientDataRequestedAt(LocalDateTime.now(ZoneOffset.UTC))
+                .patientDataRequestedAt(LocalDateTime.now(ZoneId.of(IST)))
                 .patientId(requester)
                 .build();
 
@@ -310,7 +311,7 @@ class HealthInfoControllerTest {
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .consentArtefactId(null)
                 .patientId(requester)
-                .patientDataRequestedAt(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(1))
+                .patientDataRequestedAt(LocalDateTime.now(ZoneId.of(IST)).minusMinutes(1))
                 .build();
 
         when(authenticator.verify(token)).thenReturn(just(caller));
@@ -337,7 +338,7 @@ class HealthInfoControllerTest {
         ArgumentCaptor<Set<String>> dataRequestIdsCaptor = ArgumentCaptor.forClass(Set.class);
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .dataPartStatus(null)
-                .dataFlowRequestedAt(LocalDateTime.now(ZoneOffset.UTC))
+                .dataFlowRequestedAt(LocalDateTime.now(ZoneId.of(IST)))
                 .patientId(requester)
                 .build();
 
@@ -366,7 +367,7 @@ class HealthInfoControllerTest {
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .dataPartStatus(null)
                 .patientId(requester)
-                .dataFlowRequestedAt(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(5))
+                .dataFlowRequestedAt(LocalDateTime.now(ZoneId.of(IST)).minusMinutes(5))
                 .build();
 
         when(authenticator.verify(token)).thenReturn(just(caller));
@@ -393,7 +394,7 @@ class HealthInfoControllerTest {
         ArgumentCaptor<Set<String>> dataRequestIdsCaptor = ArgumentCaptor.forClass(Set.class);
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .consentArtefactId(null)
-                .patientDataRequestedAt(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(5))
+                .patientDataRequestedAt(LocalDateTime.now(ZoneId.of(IST)).minusMinutes(5))
                 .patientId(requester)
                 .build();
 
@@ -421,7 +422,7 @@ class HealthInfoControllerTest {
         ArgumentCaptor<Set<String>> dataRequestIdsCaptor = ArgumentCaptor.forClass(Set.class);
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .consentRequestId(null)
-                .patientDataRequestedAt(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(5))
+                .patientDataRequestedAt(LocalDateTime.now(ZoneId.of(IST)).minusMinutes(5))
                 .patientId(requester)
                 .build();
 
@@ -449,7 +450,7 @@ class HealthInfoControllerTest {
         ArgumentCaptor<Set<String>> dataRequestIdsCaptor = ArgumentCaptor.forClass(Set.class);
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .consentRequestId(null)
-                .patientDataRequestedAt(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(5))
+                .patientDataRequestedAt(LocalDateTime.now(ZoneId.of(IST)).minusMinutes(5))
                 .patientId("some-other-request@ncg")
                 .build();
 

@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
+
 public class ProcessedEntry {
     private final List<String> errors = new ArrayList<>();
     private String encodedResource;
@@ -42,7 +44,7 @@ public class ProcessedEntry {
         this.trackedResources.clear();
         this.trackedResources.addAll(trackedResources);
         this.contextDate = (contextDate != null) ?
-                contextDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                contextDate.toInstant().atZone(ZoneId.of(IST)).toLocalDateTime()
                 : null;
     }
 
