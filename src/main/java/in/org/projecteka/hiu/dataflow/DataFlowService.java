@@ -16,11 +16,13 @@ import reactor.core.publisher.Mono;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static reactor.core.publisher.Mono.defer;
 
 @AllArgsConstructor
@@ -127,7 +129,7 @@ public class DataFlowService {
     }
 
     private boolean hasConsentArtefactExpired(LocalDateTime dataEraseAt) {
-        return dataEraseAt != null && dataEraseAt.isBefore(LocalDateTime.now());
+        return dataEraseAt != null && dataEraseAt.isBefore(LocalDateTime.now(ZoneId.of(IST)));
     }
 
     private boolean hasContent(Entry entry) {

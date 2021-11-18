@@ -9,10 +9,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static reactor.core.publisher.Mono.error;
 
 @AllArgsConstructor
@@ -47,15 +49,15 @@ public class CustomScheduler<T> {
     public static Function<Flux<Long>, Publisher<?>> exponentialBackOff(Duration minimum,
                                                                         Duration maximum,
                                                                         Duration timeout) {
-        Instant finish = Instant.now().plus(timeout);
+        LocalDateTime finish = LocalDateTime.now(ZoneId.of(IST)).plus(timeout);
         return iterations -> getDelay(minimum, maximum, finish, iterations);
     }
 
-    private static Flux<?> getDelay(Duration minimum, Duration maximum, Instant finish, Flux<Long> iterations) {
+    private static Flux<?> getDelay(Duration minimum, Duration maximum, LocalDateTime finish, Flux<Long> iterations) {
         return iterations
                 .map(iteration -> calculateDuration(minimum, maximum, iteration))
                 .concatMap(delay -> {
-                    if (Instant.now().isAfter(finish)) {
+                    if (LocalDateTime.now(ZoneId.of(IST)).isAfter(finish)) {
                         return error(new DelayTimeoutException());
                     }
                     return Mono.delay(delay).doOnSubscribe(logDelay(delay));

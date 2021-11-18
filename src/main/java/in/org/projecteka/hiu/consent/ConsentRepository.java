@@ -16,12 +16,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
 import static in.org.projecteka.hiu.ClientError.consentArtefactNotFound;
 import static in.org.projecteka.hiu.ClientError.consentRequestNotFound;
 import static in.org.projecteka.hiu.ClientError.dbOperationFailure;
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.Constants.STATUS;
 import static in.org.projecteka.hiu.common.Serializer.from;
 import static in.org.projecteka.hiu.common.Serializer.to;
@@ -153,7 +155,7 @@ public class ConsentRepository {
                         new JsonObject(from(consentArtefact)),
                         consentArtefact.getConsentId(),
                         status.toString(),
-                        LocalDateTime.now()),
+                        LocalDateTime.now(ZoneId.of(IST))),
                         handler -> {
                             if (handler.failed()) {
                                 logger.error(handler.cause().getMessage(), handler.cause());
@@ -316,7 +318,7 @@ public class ConsentRepository {
                                                  String consentRequestId) {
         return Mono.create(monoSink ->
                 readWriteClient.preparedQuery(UPDATE_GATEWAY_CONSENT_REQUEST_STATUS)
-                        .execute(Tuple.of(consentRequestId, status.toString(), LocalDateTime.now(), gatewayRequestId),
+                        .execute(Tuple.of(consentRequestId, status.toString(), LocalDateTime.now(ZoneId.of(IST)), gatewayRequestId),
                                 handler -> {
                                     if (handler.failed()) {
                                         logger.error(handler.cause().getMessage(), handler.cause());
@@ -355,7 +357,7 @@ public class ConsentRepository {
     public Mono<Void> updateConsentRequestStatus(ConsentStatus status, String consentRequestId) {
         return Mono.create(monoSink ->
                 readWriteClient.preparedQuery(UPDATE_CONSENT_REQUEST_STATUS)
-                        .execute(Tuple.of(consentRequestId, status.toString(), LocalDateTime.now()),
+                        .execute(Tuple.of(consentRequestId, status.toString(), LocalDateTime.now(ZoneId.of(IST))),
                                 handler -> {
                                     if (handler.failed()) {
                                         logger.error(handler.cause().getMessage(), handler.cause());

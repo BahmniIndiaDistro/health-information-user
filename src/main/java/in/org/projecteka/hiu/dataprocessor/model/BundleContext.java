@@ -19,6 +19,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
+
 public class BundleContext {
     private Bundle bundle;
     private Function<ResourceType, HITypeResourceProcessor> resourceProcessor;
@@ -58,7 +60,7 @@ public class BundleContext {
 
     public void trackResource(ResourceType resourceType, String resourceId, Date date, String title) {
         LocalDateTime localDateTime = (date != null) ?
-                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                date.toInstant().atZone(ZoneId.of(IST)).toLocalDateTime()
                 : null;
         trackedResources.add(new TrackedResourceReference(resourceType, resourceId, localDateTime, title));
     }

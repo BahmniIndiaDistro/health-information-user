@@ -148,7 +148,7 @@ public class DataFlowRequestListener {
     }
 
     private LocalDateTime getExpiryDate() {
-        return LocalDateTime.now().plusDays(dataFlowProperties.getOffsetInDays());
+        return LocalDateTime.now(ZoneId.of(IST)).plusDays(dataFlowProperties.getOffsetInDays());
     }
 
     @SneakyThrows
