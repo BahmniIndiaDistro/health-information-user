@@ -39,11 +39,11 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static in.org.projecteka.hiu.ErrorCode.INVALID_PURPOSE_OF_USE;
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.Constants.EMPTY_STRING;
 import static in.org.projecteka.hiu.common.Constants.PATIENT_REQUESTED_PURPOSE_CODE;
 import static in.org.projecteka.hiu.common.Constants.getCmSuffix;
 import static java.time.LocalDateTime.now;
-import static java.time.ZoneOffset.UTC;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static reactor.core.publisher.Mono.defer;
 import static reactor.core.publisher.Mono.just;
@@ -101,7 +101,7 @@ public class PatientConsentService {
                         }))
                 .flatMapMany(Flux::fromIterable)
                 .flatMap(hipId -> buildConsentRequest(requesterId, hipId,
-                        now(UTC).minusYears(consentServiceProperties.getConsentRequestFromYears())))
+                        now(ZoneId.of(IST)).minusYears(consentServiceProperties.getConsentRequestFromYears())))
                 .flatMap(consentRequestData -> generateConsentRequestForSelf(consentRequestData)
                         .map(dataReqId -> Map.entry(consentRequestData.getConsent().getHipId(), dataReqId)))
                 .collectList()
@@ -115,7 +115,7 @@ public class PatientConsentService {
     private List<PatientDataRequestDetail> filterRequestAfterThreshold(List<PatientDataRequestDetail> dataRequestDetails) {
         return dataRequestDetails.stream()
                 .filter(dataRequestDetail -> !dataRequestDetail.getPatientDataRequestedAt()
-                        .isAfter(now(UTC).minusMinutes(consentServiceProperties.getConsentRequestDelay())))
+                        .isAfter(now(ZoneId.of(IST)).minusMinutes(consentServiceProperties.getConsentRequestDelay())))
                 .collect(Collectors.toList());
 
     }
@@ -125,7 +125,7 @@ public class PatientConsentService {
     }
 
     private Mono<ConsentRequestData> handleForReloadConsent(String patientId, String hipId) {
-        LocalDateTime now = now(UTC);
+        LocalDateTime now = now(ZoneId.of(IST));
         logger.warn("handleForReloadConsent");
         logger.warn("now(IST) " + now(ZoneId.of("Asia/Calcutta")));
         logger.warn("now() " + now());
@@ -156,11 +156,11 @@ public class PatientConsentService {
         return just(ConsentRequestData.builder().consent(Consent.builder()
                 .hiTypes(getAllApplicableHITypes())
                 .patient(Patient.builder().id(requesterId).build())
-                .permission(Permission.builder().dataEraseAt(now(UTC)
+                .permission(Permission.builder().dataEraseAt(now(ZoneId.of(IST))
                         .plusMonths(consentServiceProperties.getConsentExpiryInMonths()))
                         .dateRange(DateRange.builder()
                                 .from(dateFrom)
-                                .to(now(UTC)).build())
+                                .to(now(ZoneId.of(IST))).build())
                         .build())
                 .purpose(new Purpose(PATIENT_REQUESTED_PURPOSE_CODE))
                 .hipId(hipId)
@@ -212,7 +212,7 @@ public class PatientConsentService {
         var patientId = hiRequest.getConsent().getPatient().getId();
         var consentRequest = ConsentRequest.builder()
                 .requestId(gatewayRequestId)
-                .timestamp(now(UTC))
+                .timestamp(now(ZoneId.of(IST)))
                 .consent(reqInfo)
                 .build();
         var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requesterId);

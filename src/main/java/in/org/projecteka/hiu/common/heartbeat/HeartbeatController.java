@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.time.ZoneId;
+
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.heartbeat.model.Status.UP;
 import static java.time.LocalDateTime.now;
-import static java.time.ZoneOffset.UTC;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
@@ -33,7 +35,7 @@ public class HeartbeatController {
     public Mono<ResponseEntity<HeartbeatResponse>> getLiveliness() {
         HeartbeatResponse heartbeatResponse = HeartbeatResponse.builder()
                 .status(UP)
-                .timeStamp(now(UTC))
+                .timeStamp(now(ZoneId.of(IST)))
                 .build();
         return Mono.just(new ResponseEntity<>(heartbeatResponse, OK));
     }

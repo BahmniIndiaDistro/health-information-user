@@ -19,12 +19,14 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.TestBuilders.dateRange;
 import static in.org.projecteka.hiu.common.TestBuilders.gatewayResponse;
 import static in.org.projecteka.hiu.common.TestBuilders.string;
@@ -35,7 +37,6 @@ import static in.org.projecteka.hiu.consent.TestBuilders.gatewayConsentArtefactR
 import static in.org.projecteka.hiu.consent.TestBuilders.hiuProperties;
 import static in.org.projecteka.hiu.consent.TestBuilders.permission;
 import static in.org.projecteka.hiu.consent.model.ConsentStatus.GRANTED;
-import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -181,7 +182,7 @@ class PatientConsentServiceTest {
 
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .hipId(hipId)
-                .patientDataRequestedAt(LocalDateTime.now(UTC))
+                .patientDataRequestedAt(LocalDateTime.now(ZoneId.of(IST)))
                 .dataRequestId(UUID.randomUUID().toString())
                 .build();
 
@@ -219,7 +220,7 @@ class PatientConsentServiceTest {
 
         var dataRequestDetail = TestBuilders.patientDataRequestDetail()
                 .hipId(hipId)
-                .patientDataRequestedAt(LocalDateTime.now(UTC))
+                .patientDataRequestedAt(LocalDateTime.now(ZoneId.of(IST)))
                 .dataRequestId(UUID.randomUUID().toString())
                 .build();
 
