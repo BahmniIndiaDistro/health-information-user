@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static in.org.projecteka.hiu.common.Constants.IST;
@@ -28,7 +29,7 @@ public class JWTGenerator {
                 .claim("username", user.getUsername())
                 .claim("role", user.getRole())
                 .claim("isVerified", user.isVerified())
-                .claim("exp", LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.of(IST)).toInstant().toEpochMilli())
+                .claim("exp", ZonedDateTime.of(LocalDateTime.now(ZoneId.of(IST)), ZoneId.systemDefault()).plus(1, ChronoUnit.HOURS).toInstant().toEpochMilli())
                 .build();
         JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload(claims.toJSONObject()));
         jwsObject.sign(signer);
