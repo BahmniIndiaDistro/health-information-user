@@ -36,7 +36,6 @@ public class Constants {
     public static final String BLOCK_LIST_FORMAT = "%s:%s";
     public static final String CORRELATION_ID = "CORRELATION-ID";
     public static final String PATH_READINESS = CURRENT_VERSION + "/readiness";
-    public static final String IST = "Asia/Calcutta";
 
     private Constants() {
     }
