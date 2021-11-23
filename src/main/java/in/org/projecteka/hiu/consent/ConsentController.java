@@ -9,8 +9,6 @@ import in.org.projecteka.hiu.consent.model.ConsentStatusRequest;
 import in.org.projecteka.hiu.consent.model.GatewayConsentArtefactResponse;
 import in.org.projecteka.hiu.consent.model.HiuConsentNotificationRequest;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +32,9 @@ import static in.org.projecteka.hiu.common.Constants.CORRELATION_ID;
 @AllArgsConstructor
 public class ConsentController {
     private final ConsentService consentService;
-    private static final Logger logger = LoggerFactory.getLogger(ConsentController.class);
 
     @PostMapping(APP_PATH_HIU_CONSENT_REQUESTS)
     public Mono<ResponseEntity<HttpStatus>> postConsentRequest(@RequestBody ConsentRequestData consentRequestData) {
-        logger.warn("consentRequest " + consentRequestData.getConsent());
-        logger.warn("ExpiredDate " + consentRequestData.getConsent().getPermission().getDataEraseAt());
         return ReactiveSecurityContextHolder.getContext()
                 .map(securityContext -> (Caller) securityContext.getAuthentication().getPrincipal())
                 .map(Caller::getUsername)

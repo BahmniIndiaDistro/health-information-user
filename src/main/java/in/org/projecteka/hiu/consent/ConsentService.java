@@ -122,9 +122,7 @@ public class ConsentService {
                 .timestamp(now(ZoneId.of(IST)))
                 .consent(reqInfo)
                 .build();
-        logger.warn("consentRequest " + consentRequest);
         var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requesterId);
-        logger.warn("hiuConsentRequest " + hiuConsentRequest);
         return gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest)
                 .then(defer(() -> consentRepository.insertConsentRequestToGateway(hiuConsentRequest)));
     }
