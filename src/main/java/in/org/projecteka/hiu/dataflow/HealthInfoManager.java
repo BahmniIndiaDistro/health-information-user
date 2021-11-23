@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +31,13 @@ import java.util.stream.Collectors;
 import static in.org.projecteka.hiu.ClientError.consentArtefactGone;
 import static in.org.projecteka.hiu.ClientError.invalidHealthInformationRequest;
 import static in.org.projecteka.hiu.ClientError.unauthorizedRequester;
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.Constants.STATUS;
 import static in.org.projecteka.hiu.dataflow.model.DataRequestStatus.ERRORED;
 import static in.org.projecteka.hiu.dataflow.model.DataRequestStatus.PROCESSING;
 import static in.org.projecteka.hiu.dataflow.model.HealthInfoStatus.PARTIAL;
 import static in.org.projecteka.hiu.dataflow.model.HealthInfoStatus.RECEIVED;
 import static java.time.LocalDateTime.now;
-import static java.time.ZoneOffset.UTC;
 import static java.util.UUID.fromString;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -167,7 +168,7 @@ public class HealthInfoManager {
                         if (dataRequestDetails.stream().anyMatch(this::isStatusNull)) {
                             logger.info("Some data parts are not yet received for data request id {}",
                                     dataRequestDetail.getDataRequestId());
-                            var status = now(UTC)
+                            var status = now(ZoneId.of(IST))
                                     .isAfter(dataRequestDetail.getDataFlowRequestedAt()
                                     .plusMinutes(serviceProperties.getDataPartWaitTime())) ?
                                     getStatusFor(dataRequestDetails) : PROCESSING;
@@ -200,7 +201,7 @@ public class HealthInfoManager {
     }
 
     private DataRequestStatus getStatusAgainstDate(LocalDateTime dateTime, Integer withinMinutes) {
-        return now(UTC).isAfter(dateTime.plusMinutes(withinMinutes)) ? ERRORED : PROCESSING;
+        return now(ZoneId.of(IST)).isAfter(dateTime.plusMinutes(withinMinutes)) ? ERRORED : PROCESSING;
     }
 
     private DataRequestStatus getStatusFor(List<PatientDataRequestDetail> dataRequestDetails) {
@@ -235,7 +236,7 @@ public class HealthInfoManager {
 
     private boolean isConsentNotExpired(Map<String, String> consentDetail) {
         var consentExpiryDate = LocalDateTime.parse(consentDetail.get("consentExpiryDate"));
-        return consentExpiryDate.isAfter(now(UTC));
+        return consentExpiryDate.isAfter(now(ZoneId.of(IST)));
     }
 
     private boolean isGrantedConsent(Map<String, String> consentDetail) {
