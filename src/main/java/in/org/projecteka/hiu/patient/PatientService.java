@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 import static in.org.projecteka.hiu.ClientError.gatewayTimeOut;
 import static in.org.projecteka.hiu.ClientError.unknownError;
 import static in.org.projecteka.hiu.ErrorCode.PATIENT_NOT_FOUND;
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.Constants.getCmSuffix;
 import static in.org.projecteka.hiu.common.CustomScheduler.scheduleThis;
 import static in.org.projecteka.hiu.common.ErrorMappings.get;
@@ -92,7 +93,7 @@ public class PatientService {
 
     private FindPatientRequest getFindPatientRequest(String id) {
         var requestId = UUID.randomUUID();
-        var timestamp = LocalDateTime.now(ZoneOffset.UTC);
+        var timestamp = LocalDateTime.now(ZoneId.of(IST));
         var patient = new in.org.projecteka.hiu.consent.model.Patient(id);
         var requester = new Requester("HIU", hiuProperties.getId());
         var query = new FindPatientQuery(patient, requester);
@@ -136,7 +137,7 @@ public class PatientService {
         var requestId = UUID.randomUUID();
         var patientOnNotifyRequest = PatientStatusNotification
                 .builder()
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
+                .timestamp(LocalDateTime.now(ZoneId.of(IST)))
                 .requestId(requestId);
         GatewayResponse gatewayResponse = new GatewayResponse(requestID.toString());
         patientOnNotifyRequest.resp(gatewayResponse).build();

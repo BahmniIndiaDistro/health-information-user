@@ -41,7 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static in.org.projecteka.hiu.common.Constants.CORRELATION_ID;
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.dataflow.model.HealthInfoStatus.ERRORED;
 import static in.org.projecteka.hiu.dataflow.model.HealthInfoStatus.PARTIAL;
 import static java.util.stream.Collectors.joining;
@@ -205,11 +206,11 @@ public class HealthDataProcessor {
                                                                            SessionStatus sessionStatus) {
         return HealthInfoNotificationRequest.builder()
                 .requestId(UUID.randomUUID())
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
+                .timestamp(LocalDateTime.now(ZoneId.of(IST)))
                 .notification(Notification.builder()
                         .consentId(context.getConsentId())
                         .transactionId(context.getTransactionId())
-                        .doneAt(LocalDateTime.now(ZoneOffset.UTC))
+                        .doneAt(LocalDateTime.now(ZoneId.of(IST)))
                         .notifier(Notifier.builder()
                                 .type(Type.HIU)
                                 .id(hiuProperties.getId())

@@ -21,10 +21,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Objects;
 import java.util.UUID;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.dataflow.TestBuilders.dataFlowRequest;
 import static in.org.projecteka.hiu.dataflow.TestBuilders.string;
 import static in.org.projecteka.hiu.dataflow.Utils.toDate;
@@ -66,7 +67,7 @@ public class DataFlowClientTest {
                         .to(toDate("2020-01-20T08:47:48")).build())
                 .build();
         var gatewayDataFlowRequest = new GatewayDataFlowRequest(UUID.randomUUID(),
-                LocalDateTime.now(ZoneOffset.UTC),
+                LocalDateTime.now(ZoneId.of(IST)),
                 dataFlowRequest);
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(202));

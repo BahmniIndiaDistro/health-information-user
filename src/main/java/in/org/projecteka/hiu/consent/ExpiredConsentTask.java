@@ -12,12 +12,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static in.org.projecteka.hiu.ClientError.consentArtefactNotFound;
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.common.Constants.getCmSuffix;
 import static in.org.projecteka.hiu.consent.model.ConsentStatus.EXPIRED;
 import static in.org.projecteka.hiu.consent.model.consentmanager.ConsentAcknowledgementStatus.OK;
@@ -59,7 +60,7 @@ public class ExpiredConsentTask extends ConsentTask {
         var requestId = UUID.randomUUID();
         var consentArtefactRequest = ConsentOnNotifyRequest
                 .builder()
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
+                .timestamp(LocalDateTime.now(ZoneId.of(IST)))
                 .requestId(requestId);
         var acknowledgements = new ArrayList<ConsentAcknowledgement>();
 

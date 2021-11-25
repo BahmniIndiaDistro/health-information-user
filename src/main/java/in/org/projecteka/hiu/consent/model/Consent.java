@@ -13,8 +13,10 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
+import static in.org.projecteka.hiu.common.Constants.IST;
 import static in.org.projecteka.hiu.consent.model.consentmanager.Frequency.ONE_HOUR;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -63,7 +65,7 @@ public class Consent {
                 .hiTypes(getHiTypes())
                 .permission(getPermission())
                 .status(ConsentStatus.REQUESTED)
-                .createdDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now(ZoneId.of(IST)))
                 .hip(hip)
                 .careContexts(getCareContexts())
                 .build();
