@@ -28,7 +28,7 @@ public class Constants {
     public static final String PATH_ON_AUTH_CONFIRM = CURRENT_VERSION + "/users/auth/on-confirm";
     public static final String GET_CERT = "/certs";
     public static final String PATH_PATIENT_STATUS_NOTIFY = "/v0.5/patients/status/notify";
-    public static final String PATH_PATIENT_STATUS_ON_NOTIFY = "/v0.5/patients/status/on-notify";
+    public static final String PATH_PATIENT_STATUS_ON_NOTIFY = "/patients/status/on-notify";
 
     public static final String STATUS = "status";
     public static final String DELIMITER = "@";
