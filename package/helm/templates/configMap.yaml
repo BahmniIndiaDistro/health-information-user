@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+data:
+  HIU_ID: "{{ .Values.config.HIU_ID }}"
+  HIU_NAME: "{{ .Values.config.HIU_NAME }}"
+  IDENTITY_JWK_URL: "{{ .Values.config.IDENTITY_JWK_URL }}"
+  DATA_PUSH_URL: "{{ .Values.config.DATA_PUSH_URL }}"
+  CONSENT_NOTIFICATION_URL: "{{ .Values.config.CONSENT_NOTIFICATION_URL }}"
+  CONSENT_MANAGEMENT_SUFFIX: "{{ .Values.config.CONSENT_MANAGEMENT_SUFFIX }}"
+  CONSENT_MANAGEMENT_URL: "{{ .Values.config.CONSENT_MANAGEMENT_URL }}"
+  DEFAULT_PAGE_SIZE: "{{ .Values.config.DEFAULT_PAGE_SIZE }}"
+  MAX_PAGE_SIZE: "{{ .Values.config.MAX_PAGE_SIZE }}"
+  LOCAL_STORAGE_PATH: "{{ .Values.config.LOCAL_STORAGE_PATH }}"
+  POSTGRES_HOST: "{{ .Values.config.POSTGRES_HOST }}"
+  POSTGRES_PORT: "{{ .Values.config.POSTGRES_PORT }}"
+  CONSENT_MANAGER_DB_NAME: "{{ .Values.config.CONSENT_MANAGER_DB_NAME }}"
+  DB_CONNECTION_POOL_SIZE: "{{ .Values.config.DB_CONNECTION_POOL_SIZE }}"
+  OFFSET_IN_DAYS: "{{ .Values.config.OFFSET_IN_DAYS }}"
+  USING_GATEWAY: "{{ .Values.config.USING_GATEWAY }}"
+  GATEWAY_BASE_URL: "{{ .Values.config.GATEWAY_BASE_URL }}"
+  GATEWAY_REQUEST_TIMEOUT: "{{ .Values.config.GATEWAY_REQUEST_TIMEOUT }}"
+  GATEWAY_JWK_URL: "{{ .Values.config.GATEWAY_JWK_URL }}"
+  HFR_AFFINITY_DOMAINS: "{{ .Values.config.HFR_AFFINITY_DOMAINS }}"
+  RABBITMQ_HOST: "{{ .Values.config.RABBITMQ_HOST }}"
+  RABBITMQ_PORT: "{{ .Values.config.RABBITMQ_PORT }}"
+  MAX_IN_MEMORY_SIZE: "{{ .Values.config.MAX_IN_MEMORY_SIZE }}"
+  DATA_FLOW_CONSENT_REQUEST_WAIT_TIME: "{{ .Values.config.DATA_FLOW_CONSENT_REQUEST_WAIT_TIME }}"
+  DATA_FLOW_CONSENT_ARTEFACT_WAIT_TIME: "{{ .Values.config.DATA_FLOW_CONSENT_ARTEFACT_WAIT_TIME }}"
+  DATA_FLOW_PART_WAIT_TIME: "{{ .Values.config.DATA_FLOW_PART_WAIT_TIME }}"
