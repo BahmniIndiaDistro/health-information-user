@@ -17,7 +17,7 @@ config:
   HIU_ID: "Bahmni"
   HIU_NAME: "Bahmni"
   IDENTITY_JWK_URL: "https://dev.ndhm.gov.in/auth/realms/consent-manager/protocol/openid-connect/certs"
-  DATA_PUSH_URL: ${HIU_DATA_PUSH_URL:?}
+  DATA_PUSH_URL: ""
   CONSENT_NOTIFICATION_URL: "http://localhost:8003/consent/notification"
   CONSENT_MANAGEMENT_SUFFIX: "@sbx"
   CONSENT_MANAGEMENT_URL: "https://dev.ndhm.gov.in/cm"
@@ -40,14 +40,14 @@ config:
   DATA_FLOW_CONSENT_REQUEST_WAIT_TIME: 1
   DATA_FLOW_CONSENT_ARTEFACT_WAIT_TIME: 1
   DATA_FLOW_PART_WAIT_TIME: 1440
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "welcome"
+  RABBITMQ_USERNAME: "guest"
+  RABBITMQ_PASSWORD: "guest"
 
 secrets:
   HIU_CLIENT_ID: ""
   HIU_CLIENT_SECRET: ""
-  POSTGRES_USER: ""
-  POSTGRES_PASSWORD: ""
-  RABBITMQ_USERNAME: ""
-  RABBITMQ_PASSWORD: ""
 
 
 autoscaling:
