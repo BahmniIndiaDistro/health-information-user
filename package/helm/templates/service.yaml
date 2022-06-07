@@ -10,7 +10,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: 9053
+      targetPort: 8003
       protocol: TCP
       name: '9053'
   selector:
