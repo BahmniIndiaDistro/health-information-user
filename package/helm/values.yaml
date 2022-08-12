@@ -36,7 +36,7 @@ config:
   OFFSET_IN_DAYS: 2
   USING_GATEWAY: true
   GATEWAY_BASE_URL: "https://dev.abdm.gov.in/gateway/v0.5"
-  GATEWAY_REQUEST_TIMEOUT: 2000
+  GATEWAY_REQUEST_TIMEOUT: 3000
   GATEWAY_JWK_URL: "https://dev.abdm.gov.in/gateway/v0.5/certs"
   HFR_AFFINITY_DOMAINS: "facilitysbx.ndhm.gov.in"
   RABBITMQ_HOST: bahmni-dev-rabbitmq
