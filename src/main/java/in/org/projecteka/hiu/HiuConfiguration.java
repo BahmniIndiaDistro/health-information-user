@@ -929,6 +929,7 @@ public class HiuConfiguration {
                 .codecs(configurer -> {
                     configurer.defaultCodecs().jackson2JsonEncoder(encoder);
                     configurer.defaultCodecs().jackson2JsonDecoder(decoder);
+                    configurer.defaultCodecs().maxInMemorySize(-1);
                 }).build();
     }
 
