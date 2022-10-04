@@ -4,8 +4,12 @@ on:
   push:
     branches:
       - master
+      - 'release-*'
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
 jobs:
-  build:
+  build-publish-docker-helm:
+    name: Build & Publish Docker Image & Helm Chart
     runs-on: ubuntu-latest
     env:
       HELM_CHART_PATH: package/helm/
@@ -23,10 +27,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew sonarqube
-      - name: Set env
+      - name: Set env.ARTIFACT_VERSION
         run: |
-          APP_VERSION=$(cat .appversion)
-          echo "ARTIFACT_VERSION=$(echo $APP_VERSION-${{github.run_number}})" >> $GITHUB_ENV
+          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
+          ./setArtifactVersion.sh
+          rm setArtifactVersion.sh
       - name: Docker Registry
         env:
           DOCKER_REGISTRY_URL: docker.io
