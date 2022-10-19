@@ -33,7 +33,8 @@ public class AttachmentDataTypeProcessor {
             "IMAGE/JPEG", ".jpeg",
             "IMAGE/PNG", ".png",
             "AUDIO/WAV", ".wav",
-            "VIDEO/MPEG", ".mpeg");
+            "VIDEO/MPEG", ".mpeg",
+            "VIDEO/MP4",".mp4");
     public static final String DEFAULT_FILE_EXTENSION = ".txt";
 
     public static String getFileExtension(String mimeType) {
