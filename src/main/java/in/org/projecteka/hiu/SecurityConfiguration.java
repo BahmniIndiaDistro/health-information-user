@@ -69,7 +69,7 @@ public class SecurityConfiguration {
 
     private static final List<Map.Entry<HttpMethod, String>> CM_PATIENT_APIS = List.of(
             Map.entry(HttpMethod.POST, APP_PATH_PATIENT_CONSENT_REQUEST),
-            Map.entry(HttpMethod.GET, "/v1/patient/health-information/fetch/**/attachments/**"),
+            Map.entry(HttpMethod.GET, "/v1/patient/health-information/fetch/*/attachments/*"),
             Map.entry(HttpMethod.POST, API_PATH_FETCH_PATIENT_HEALTH_INFO),
             Map.entry(HttpMethod.POST, API_PATH_GET_HEALTH_INFO_STATUS));
     private static final String[] ALLOWED_LISTS = new String[]{"/**.json",

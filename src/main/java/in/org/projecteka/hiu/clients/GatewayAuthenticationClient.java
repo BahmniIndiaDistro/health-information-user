@@ -3,7 +3,8 @@ package in.org.projecteka.hiu.clients;
 import in.org.projecteka.hiu.ClientError;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +20,7 @@ import static java.lang.String.format;
 @AllArgsConstructor
 public class GatewayAuthenticationClient {
     private final WebClient webclient;
-    private final Logger logger = Logger.getLogger(GatewayAuthenticationClient.class);
+    private final Logger logger = LogManager.getLogger(GatewayAuthenticationClient.class);
 
     public GatewayAuthenticationClient(WebClient.Builder webClient, String baseUrl) {
         this.webclient = webClient.baseUrl(baseUrl).build();

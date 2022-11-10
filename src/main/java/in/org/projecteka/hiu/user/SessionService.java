@@ -5,7 +5,8 @@ import in.org.projecteka.hiu.Error;
 import in.org.projecteka.hiu.ErrorCode;
 import in.org.projecteka.hiu.ErrorRepresentation;
 import lombok.AllArgsConstructor;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import reactor.core.publisher.Mono;
@@ -16,7 +17,7 @@ public class SessionService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JWTGenerator jwtGenerator;
-    private final Logger logger = Logger.getLogger(SessionService.class);
+    private final Logger logger = LogManager.getLogger(SessionService.class);
 
     public Mono<Session> forNew(SessionRequest sessionRequest) {
         return Mono.justOrEmpty(sessionRequest)

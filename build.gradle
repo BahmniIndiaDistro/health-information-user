@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.3.2.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
     id "org.sonarqube" version "3.0"
     id 'jacoco'
@@ -46,7 +46,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.vertx:vertx-pg-client:4.1.5'
     implementation group: 'com.ongres.scram', name: 'client', version: '2.1'
-    implementation 'log4j:log4j:1.2.17'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
     implementation 'com.google.guava:guava:29.0-jre'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
@@ -59,8 +60,8 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:4.8.0"
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.jeasy:easy-random-core:4.2.0'
-    implementation 'ca.uhn.hapi.fhir:hapi-fhir-base:4.2.0'
-    implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:4.2.0'
+    implementation 'ca.uhn.hapi.fhir:hapi-fhir-base:5.4.0'
+    implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:5.4.0'
     implementation 'org.apache.httpcomponents:httpclient:4.5.12'
     implementation 'com.nimbusds:nimbus-jose-jwt:8.19'
     implementation 'org.passay:passay:1.6.0'

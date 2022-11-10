@@ -2,7 +2,7 @@ package in.org.projecteka.hiu;
 
 import org.slf4j.Logger;
 import org.slf4j.MDC;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
@@ -34,9 +34,9 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
     public GlobalExceptionHandler(
             ErrorAttributes errorAttributes,
-            ResourceProperties resourceProperties,
+            WebProperties webProperties,
             ApplicationContext applicationContext) {
-        super(errorAttributes, resourceProperties, applicationContext);
+        super(errorAttributes, webProperties.getResources(), applicationContext);
     }
 
     @Override

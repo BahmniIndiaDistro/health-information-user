@@ -18,7 +18,8 @@ import in.org.projecteka.hiu.ServiceCaller;
 import in.org.projecteka.hiu.user.Role;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import reactor.core.publisher.Mono;
 
 import java.text.ParseException;
@@ -32,7 +33,7 @@ import static java.util.stream.Collectors.toList;
 
 public class GatewayTokenVerifier {
     private final ConfigurableJWTProcessor<SecurityContext> jwtProcessor;
-    private final Logger logger = Logger.getLogger(GatewayTokenVerifier.class);
+    private final Logger logger = LogManager.getLogger(GatewayTokenVerifier.class);
 
     public GatewayTokenVerifier(JWKSet jwkSet) {
         var immutableJWKSet = new ImmutableJWKSet<>(jwkSet);

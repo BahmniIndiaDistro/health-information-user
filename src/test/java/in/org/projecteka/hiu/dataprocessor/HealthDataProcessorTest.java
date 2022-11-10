@@ -103,7 +103,7 @@ class HealthDataProcessorTest {
         String transactionId = "123456";
         String partNumber = "1";
         DataAvailableMessage message = new DataAvailableMessage(transactionId, absolutePath, partNumber);
-        var content = getFHIRResource(message).getNotifiedData().getEntries().get(0).getContent();
+        var content = getFHIRResource(message).getNotifiedData().getEntries().get(0).getContent().replaceAll("\n","");
         var savedKeyMaterial = dataFlowRequestKeyMaterial().build();
         String consentId = "consentId";
         String cmId = "ncg";
@@ -159,7 +159,7 @@ class HealthDataProcessorTest {
         String transactionId = "123456";
         String partNumber = "1";
         DataAvailableMessage message = new DataAvailableMessage(transactionId, absolutePath, partNumber);
-        var content = getFHIRResource(message).getNotifiedData().getEntries().get(0).getContent();
+        var content = getFHIRResource(message).getNotifiedData().getEntries().get(0).getContent().replaceAll("\n","");
         var savedKeyMaterial = dataFlowRequestKeyMaterial().build();
         String consentId = "consentId";
         String cmId = "ncg";
@@ -217,7 +217,7 @@ class HealthDataProcessorTest {
         String consentId = "consentId";
         String cmId = "ncg";
         DataAvailableMessage message = new DataAvailableMessage(transactionId, absolutePath, partNumber);
-        var content = getFHIRResource(message).getNotifiedData().getEntries().get(0).getContent();
+        var content = getFHIRResource(message).getNotifiedData().getEntries().get(0).getContent().replaceAll("\n","");
         var savedKeyMaterial = dataFlowRequestKeyMaterial().build();
         String token = string();
 

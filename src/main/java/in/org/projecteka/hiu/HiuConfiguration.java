@@ -89,7 +89,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -527,12 +527,12 @@ public class HiuConfiguration {
     // order = -2.
     @Order(-2)
     public GlobalExceptionHandler clientErrorExceptionHandler(ErrorAttributes errorAttributes,
-                                                              ResourceProperties resourceProperties,
+                                                              WebProperties webProperties,
                                                               ApplicationContext applicationContext,
                                                               ServerCodecConfigurer serverCodecConfigurer) {
 
         GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler(errorAttributes,
-                resourceProperties, applicationContext);
+                webProperties, applicationContext);
         globalExceptionHandler.setMessageWriters(serverCodecConfigurer.getWriters());
         return globalExceptionHandler;
     }

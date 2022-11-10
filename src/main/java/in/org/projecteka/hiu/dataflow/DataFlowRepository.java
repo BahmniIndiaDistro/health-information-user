@@ -10,7 +10,8 @@ import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
 import lombok.AllArgsConstructor;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -75,7 +76,7 @@ public class DataFlowRepository {
             "LEFT JOIN data_flow_parts dfp ON dfr.transaction_id = dfp.transaction_id " +
             "WHERE pcr.data_request_id IN (%s)";
 
-    private static final Logger logger = Logger.getLogger(DataFlowRepository.class);
+    private static final Logger logger = LogManager.getLogger(DataFlowRepository.class);
     private final PgPool readWriteClient;
     private final PgPool readOnlyClient;
 
