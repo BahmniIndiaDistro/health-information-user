@@ -109,7 +109,7 @@ class HealthDataProcessorTest {
         String cmId = "ncg";
         String token = string();
 
-        when(healthDataRepository.insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(), eq("11123232324.UNKNOWN"), any(), any()))
+        when(healthDataRepository.insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(), eq("Bundle/11123232324.UNKNOWN"), any(), any()))
                 .thenReturn(Mono.empty());
         when(dataFlowRepository.getKeys("123456")).thenReturn(Mono.just(savedKeyMaterial));
         when(dataFlowRepository.updateDataFlowWithStatus(eq(transactionId), eq(partNumber), eq(""), eq(HealthInfoStatus.SUCCEEDED), any()))
@@ -132,7 +132,7 @@ class HealthDataProcessorTest {
                 .getHipId(eq(consentId));
         verify(consentRepository,times(1))
                 .getConsentMangerId(eq(consentId));
-        verify(healthDataRepository, times(1)).insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(), eq("11123232324.UNKNOWN"), any(), eq("10000005"));
+        verify(healthDataRepository, times(1)).insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(), eq("Bundle/11123232324.UNKNOWN"), any(), eq("10000005"));
         verify(dataFlowRepository, times(1))
                 .updateDataFlowWithStatus(eq(transactionId), eq(partNumber), eq(""), eq(HealthInfoStatus.SUCCEEDED), any());
         verify(dataFlowRepository, times(1))
@@ -188,7 +188,7 @@ class HealthDataProcessorTest {
         verify(consentRepository,times(1))
                 .getConsentMangerId(eq(consentId));
         verify(healthDataRepository, times(1)).insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(),
-                eq("11123232324.UNKNOWN"), any(), eq("10000005"));
+                eq("Bundle/11123232324.UNKNOWN"), any(), eq("10000005"));
         verify(dataFlowRepository, times(1))
                 .updateDataFlowWithStatus(eq(transactionId), eq(partNumber), eq(""), eq(HealthInfoStatus.SUCCEEDED), any());
         verify(dataFlowRepository, times(1))
@@ -244,7 +244,7 @@ class HealthDataProcessorTest {
         verify(consentRepository,times(1))
                 .getConsentMangerId(eq(consentId));
         verify(healthDataRepository, times(1)).insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(),
-                eq("11123232324.UNKNOWN"), any(), eq("10000005"));
+                eq("Bundle/11123232324.UNKNOWN"), any(), eq("10000005"));
         verify(dataFlowRepository, times(1))
                 .updateDataFlowWithStatus(eq(transactionId), eq(partNumber), eq(""), eq(HealthInfoStatus.SUCCEEDED), any());
         verify(dataFlowRepository, times(1))
@@ -291,7 +291,7 @@ class HealthDataProcessorTest {
         verify(consentRepository,times(1))
                 .getConsentMangerId(eq(consentId));
         verify(healthDataRepository, times(1)).insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(),
-                eq("89fb2983-9cef-4f67-baa2-4304f37c8ec8.UNKNOWN"), any(), eq("10000005"));
+                eq("Bundle/89fb2983-9cef-4f67-baa2-4304f37c8ec8.UNKNOWN"), any(), eq("10000005"));
         verify(dataFlowRepository, times(1))
                 .updateDataFlowWithStatus(eq(transactionId), eq(partNumber), eq(""), eq(HealthInfoStatus.SUCCEEDED), any());
         verify(dataFlowRepository, times(1))
@@ -343,7 +343,7 @@ class HealthDataProcessorTest {
         verify(consentRepository,times(1))
                 .getConsentMangerId(eq(consentId));
         verify(healthDataRepository, times(1)).insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(),
-                eq("bundle-01.UNKNOWN"), any(), eq("10000005"));
+                eq("Bundle/bundle-01.UNKNOWN"), any(), eq("10000005"));
         verify(dataFlowRepository, times(1))
                 .updateDataFlowWithStatus(eq(transactionId), eq(partNumber), eq(""), eq(HealthInfoStatus.SUCCEEDED), any());
         verify(dataFlowRepository, times(1))
@@ -395,7 +395,7 @@ class HealthDataProcessorTest {
         verify(consentRepository,times(1))
                 .getConsentMangerId(eq(consentId));
         verify(healthDataRepository, times(1)).insertDataFor(eq(transactionId), eq(partNumber), any(), any(), any(),
-                eq("bundle-01.UNKNOWN"), any(), eq("10000005"));
+                eq("Bundle/bundle-01.UNKNOWN"), any(), eq("10000005"));
         verify(dataFlowRepository, times(1))
                 .updateDataFlowWithStatus(eq(transactionId), eq(partNumber), eq(""), eq(HealthInfoStatus.SUCCEEDED), any());
         verify(dataFlowRepository, times(1))
