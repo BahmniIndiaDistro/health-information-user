@@ -17,19 +17,8 @@ import in.org.projecteka.hiu.auth.ExternalIDPOfflineAuthenticator;
 import in.org.projecteka.hiu.auth.IDPProperties;
 import in.org.projecteka.hiu.auth.ExternalIdentityProvider;
 import in.org.projecteka.hiu.auth.IdentityProvider;
-import in.org.projecteka.hiu.clients.GatewayAuthenticationClient;
-import in.org.projecteka.hiu.clients.GatewayServiceClient;
-import in.org.projecteka.hiu.clients.HealthInformationClient;
-import in.org.projecteka.hiu.clients.Patient;
-import in.org.projecteka.hiu.common.Authenticator;
-import in.org.projecteka.hiu.common.CMPatientAuthenticator;
-import in.org.projecteka.hiu.common.CacheMethodProperty;
-import in.org.projecteka.hiu.common.Gateway;
-import in.org.projecteka.hiu.common.GatewayTokenVerifier;
-import in.org.projecteka.hiu.common.KeyPairConfig;
-import in.org.projecteka.hiu.common.RabbitQueueNames;
-import in.org.projecteka.hiu.common.RedisOptions;
-import in.org.projecteka.hiu.common.UserAuthenticator;
+import in.org.projecteka.hiu.clients.*;
+import in.org.projecteka.hiu.common.*;
 import in.org.projecteka.hiu.common.cache.CacheAdapter;
 import in.org.projecteka.hiu.common.cache.LoadingCacheGenericAdapter;
 import in.org.projecteka.hiu.common.cache.RedisGenericAdapter;
@@ -125,7 +114,11 @@ import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
 import javax.net.ssl.SSLException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -139,8 +132,10 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static in.org.projecteka.hiu.common.Constants.EMPTY_STRING;
 import static io.lettuce.core.ReadFrom.MASTER_PREFERRED;
@@ -782,8 +777,43 @@ public class HiuConfiguration {
     @Bean("userAuthenticator")
     public Authenticator userAuthenticator(IdentityServiceProperties identityServiceProperties,
                                            ConfigurableJWTProcessor<SecurityContext> jwtProcessor) throws IOException, ParseException {
-        var jwkSet = JWKSet.load(new URL(identityServiceProperties.getJwkUrl()));
-        return new CMPatientAuthenticator(jwkSet, jwtProcessor);
+        try {
+            URL jwksUrl = new URL(identityServiceProperties.getJwkUrl());
+
+            // Create HTTP connection
+            HttpURLConnection connection = (HttpURLConnection) jwksUrl.openConnection();
+            connection.setRequestMethod("GET");
+
+            // Add custom headers
+            connection.setRequestProperty(REQUEST_ID, UUID.randomUUID().toString());
+            connection.setRequestProperty(TIMESTAMP, Utils.getISOTimestamp());
+            connection.setRequestProperty(X_CM_ID,"sbx");
+
+            // Set timeouts (optional)
+            connection.setConnectTimeout(10000); // 10 seconds
+            connection.setReadTimeout(10000);    // 10 seconds
+
+            // Check response code
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Failed to fetch JWK Set, HTTP status: " + responseCode);
+            }
+
+            // Parse the JWK Set
+            String jsonString;
+            try (InputStream inputStream = connection.getInputStream();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                jsonString = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            }
+
+            // Parse the JWK Set
+            JWKSet jwkSet = JWKSet.parse(jsonString);
+            return new CMPatientAuthenticator(jwkSet, jwtProcessor);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
     @Bean
