@@ -37,6 +37,11 @@ public class Constants {
     public static final String CORRELATION_ID = "CORRELATION-ID";
     public static final String PATH_READINESS = CURRENT_VERSION + "/readiness";
 
+    public static final String PATH_GATEWAY_SESSION = "/api/hiecm/gateway/v3/sessions";
+
+    public static final String REQUEST_ID = "REQUEST-ID";
+    public static final String TIMESTAMP = "TIMESTAMP";
+
     private Constants() {
     }
 
