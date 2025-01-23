@@ -5,7 +5,6 @@ import in.org.projecteka.hiu.clients.GatewayServiceClient;
 import in.org.projecteka.hiu.clients.Patient;
 import in.org.projecteka.hiu.common.cache.CacheAdapter;
 import in.org.projecteka.hiu.consent.model.ConsentRequestData;
-import in.org.projecteka.hiu.patient.model.PatientSearchGatewayResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -31,7 +30,6 @@ import static in.org.projecteka.hiu.consent.model.ConsentStatus.DENIED;
 import static in.org.projecteka.hiu.consent.model.ConsentStatus.GRANTED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -43,8 +41,6 @@ class ConsentServiceTest {
     CacheAdapter<String, Patient> cache;
     @Mock
     CacheAdapter<String, String> patientRequestCache;
-    @Mock
-    CacheAdapter<String, PatientSearchGatewayResponse> patientSearchCache;
     @Mock
     CacheAdapter<String, String> gatewayCache;
     @Mock

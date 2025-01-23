@@ -9,7 +9,6 @@ public class Constants {
     public static final String PATH_CONSENTS_ON_FIND = CURRENT_VERSION + "/patients/on-find";
     public static final String PATH_HEALTH_INFORMATION_HIU_ON_REQUEST = CURRENT_VERSION + "/health-information/hiu/on-request";
     public static final String PATH_HEARTBEAT = CURRENT_VERSION + "/heartbeat";
-    public static final String PATH_PATIENTS_ON_FIND = CURRENT_VERSION + "/patients/on-find";
     public static final String X_CM_ID = "X-CM-ID";
     public static final String PATH_DATA_TRANSFER = "/data/notification";
     public static final String EMPTY_STRING = "";
@@ -38,7 +37,7 @@ public class Constants {
     public static final String PATH_READINESS = CURRENT_VERSION + "/readiness";
 
     public static final String PATH_GATEWAY_SESSION = "/api/hiecm/gateway/v3/sessions";
-
+    public static final String PATH_ABHA_ADDRESS_SEARCH = "/login/abha/search";
     public static final String REQUEST_ID = "REQUEST-ID";
     public static final String TIMESTAMP = "TIMESTAMP";
 

@@ -50,6 +50,7 @@ hiu:
     clientSecret: ${HIU_CLIENT_SECRET}
     jwkUrl: ${GATEWAY_JWK_URL}
     access-token-expiry-in-minutes: ${TOKEN_EXPIRY:10}
+    abhaAddressBaseUrl: ${ABHA_ADDRESS_BASE_URL}
   consentservice:
     consentRequestFromYears: ${CONSENT_REQUEST_FROM_YEARS:7}
     consentExpiryInMonths: ${CONSETN_EXPIRY_IN_MONTHS:2}

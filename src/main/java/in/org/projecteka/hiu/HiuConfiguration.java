@@ -51,7 +51,6 @@ import in.org.projecteka.hiu.dataflow.model.PatientHealthInfoStatus;
 import in.org.projecteka.hiu.dataprocessor.DataAvailabilityListener;
 import in.org.projecteka.hiu.dataprocessor.HealthDataRepository;
 import in.org.projecteka.hiu.patient.PatientService;
-import in.org.projecteka.hiu.patient.model.PatientSearchGatewayResponse;
 import in.org.projecteka.hiu.user.JWTGenerator;
 import in.org.projecteka.hiu.user.SessionService;
 import in.org.projecteka.hiu.user.UserRepository;
@@ -137,7 +136,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static in.org.projecteka.hiu.common.Constants.EMPTY_STRING;
+import static in.org.projecteka.hiu.common.Constants.*;
 import static io.lettuce.core.ReadFrom.MASTER_PREFERRED;
 import static java.time.Duration.ofDays;
 import static java.time.Duration.ofMinutes;
@@ -322,14 +321,14 @@ public class HiuConfiguration {
                                          CacheAdapter<String, Patient> cache,
                                          HiuProperties hiuProperties,
                                          GatewayProperties gatewayProperties,
-                                         CacheAdapter<String, PatientSearchGatewayResponse> patientSearchCache,
-                                         PatientConsentService patientConsentService) {
+                                         PatientConsentService patientConsentService,
+                                         AbhaAddressServiceClient abhaAddressServiceClient) {
         return new PatientService(
                 gatewayServiceClient,
                 cache,
                 hiuProperties,
                 gatewayProperties,
-                patientSearchCache, patientConsentService);
+                patientConsentService, abhaAddressServiceClient);
     }
 
     @Bean
@@ -463,47 +462,6 @@ public class HiuConfiguration {
         return new ReactiveRedisTemplate<>(factory, builder.value(valueSerializer).build());
     }
 
-    @Bean
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "guava", matchIfMissing = true)
-    public CacheAdapter<String, PatientSearchGatewayResponse> patientSearchCacheAdapter(
-            LoadingCache<String, PatientSearchGatewayResponse> patientSearchCache) {
-        return new LoadingCacheGenericAdapter<>(patientSearchCache, PatientSearchGatewayResponse.empty());
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "guava", matchIfMissing = true)
-    public LoadingCache<String, PatientSearchGatewayResponse> patientSearchCache() {
-        return CacheBuilder
-                .newBuilder()
-                .maximumSize(50)
-                .expireAfterWrite(1, TimeUnit.HOURS)
-                .build(new CacheLoader<>() {
-                    public PatientSearchGatewayResponse load(String anyKey) {
-                        return PatientSearchGatewayResponse.empty();
-                    }
-                });
-    }
-
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "redis")
-    @Bean
-    public CacheAdapter<String, PatientSearchGatewayResponse> redisPatientSearchResponse(
-            ReactiveRedisOperations<String, PatientSearchGatewayResponse> stringReactiveRedisOperations,
-            RedisOptions redisOptions) {
-        return new RedisGenericAdapter<>(stringReactiveRedisOperations,
-                ofMinutes(30),
-                "hiu-patient-gateway-response",
-                redisOptions.getRetry());
-    }
-
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "redis")
-    @Bean
-    ReactiveRedisOperations<String, PatientSearchGatewayResponse> patientResponseReactiveOperations(
-            ReactiveRedisConnectionFactory factory) {
-        var valueSerializer = new Jackson2JsonRedisSerializer<>(PatientSearchGatewayResponse.class);
-        RedisSerializationContextBuilder<String, PatientSearchGatewayResponse> builder =
-                RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
-        return new ReactiveRedisTemplate<>(factory, builder.value(valueSerializer).build());
-    }
 
     @Bean
     public ConsentRepository consentRepository(@Qualifier("readWriteClient") PgPool readWriteClient,
@@ -885,6 +843,13 @@ public class HiuConfiguration {
                                                      GatewayProperties serviceProperties,
                                                      Gateway gateway) {
         return new GatewayServiceClient(builder, serviceProperties, gateway);
+    }
+
+    @Bean
+    public AbhaAddressServiceClient abhaAddressServiceClient(@Qualifier("customBuilder") WebClient.Builder builder,
+                                                         GatewayProperties serviceProperties,
+                                                         Gateway gateway) {
+        return new AbhaAddressServiceClient(builder, serviceProperties, gateway);
     }
 
     @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "guava", matchIfMissing = true)

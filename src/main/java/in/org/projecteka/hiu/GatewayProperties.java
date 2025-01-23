@@ -19,4 +19,5 @@ public class GatewayProperties {
     private String clientSecret;
     private String jwkUrl;
     private int accessTokenExpiryInMinutes;
+    private String abhaAddressBaseUrl;
 }
