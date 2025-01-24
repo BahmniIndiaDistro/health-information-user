@@ -8,9 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
@@ -18,9 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class ConsentOnNotifyRequest {
-    private UUID requestId;
-    private LocalDateTime timestamp;
     private List<ConsentAcknowledgement> acknowledgement;
     private RespError error;
-    private GatewayResponse resp;
+    private GatewayResponse response;
 }

@@ -4,7 +4,7 @@ public class Constants {
     // APIs
     private static final String CURRENT_VERSION = "/v0.5";
     public static final String PATH_CONSENT_REQUESTS_ON_INIT = "/api/v3/hiu/consent/request/on-init";
-    public static final String PATH_CONSENTS_HIU_NOTIFY = CURRENT_VERSION + "/consents/hiu/notify";
+    public static final String PATH_CONSENTS_HIU_NOTIFY = "/api/v3/hiu/consent/request/notify";
     public static final String PATH_CONSENTS_ON_FETCH = CURRENT_VERSION + "/consents/on-fetch";
     public static final String PATH_CONSENTS_ON_FIND = CURRENT_VERSION + "/patients/on-find";
     public static final String PATH_HEALTH_INFORMATION_HIU_ON_REQUEST = CURRENT_VERSION + "/health-information/hiu/on-request";
@@ -41,7 +41,7 @@ public class Constants {
 
     public static final String GATEWAY_PATH_CONSENT_REQUESTS_INIT = "/api/hiecm/consent/v3/request/init";
     public static final String GATEWAY_PATH_CONSENT_ARTEFACT_FETCH =  "/api/hiecm/consent/v3/fetch";
-    public static final String GATEWAY_PATH_CONSENT_ON_NOTIFY = "/consents/hiu/on-notify";
+    public static final String GATEWAY_PATH_CONSENT_ON_NOTIFY = "/api/hiecm/consent/v3/request/hiu/on-notify";
     public static final String REQUEST_ID = "REQUEST-ID";
     public static final String TIMESTAMP = "TIMESTAMP";
 

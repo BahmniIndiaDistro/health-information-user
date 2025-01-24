@@ -56,8 +56,10 @@ public class ConsentController {
 
     @PostMapping(Constants.PATH_CONSENTS_HIU_NOTIFY)
     public Mono<ResponseEntity<HttpStatus>> hiuConsentNotification(
-            @RequestBody @Valid HiuConsentNotificationRequest hiuNotification) {
-        consentService.handleNotification(hiuNotification)
+            @RequestBody @Valid HiuConsentNotificationRequest hiuNotification,
+            @RequestHeader(REQUEST_ID) UUID requestId,
+            @RequestHeader(TIMESTAMP) String timestamp ) {
+        consentService.handleNotification(hiuNotification, requestId, Utils.parseTimeStamp(timestamp))
                 .subscriberContext(ctx -> {
                     Optional<String> correlationId = Optional.ofNullable(MDC.get(CORRELATION_ID));
                     return correlationId.map(id -> ctx.put(CORRELATION_ID, id))

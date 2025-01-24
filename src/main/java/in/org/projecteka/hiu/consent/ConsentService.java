@@ -207,8 +207,8 @@ public class ConsentService {
                 .map(artefactStatus -> consent.toBuilder().status(artefactStatus).build());
     }
 
-    public Mono<Void> handleNotification(HiuConsentNotificationRequest hiuNotification) {
-        return processConsentNotification(hiuNotification.getNotification(), hiuNotification.getTimestamp(), hiuNotification.getRequestId());
+    public Mono<Void> handleNotification(HiuConsentNotificationRequest hiuNotification, UUID requestId, LocalDateTime timestamp) {
+        return processConsentNotification(hiuNotification.getNotification(), timestamp ,requestId);
     }
 
     public Mono<Void> handleConsentArtefact(GatewayConsentArtefactResponse consentArtefactResponse) {

@@ -12,27 +12,8 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 public class HiuConsentNotificationRequest {
-    @NotNull
-    private UUID requestId;
-    @NotNull
-    private LocalDateTime timestamp;
     private ConsentNotification notification;
 
-    public UUID getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(UUID requestId) {
-        this.requestId = requestId;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
 
     public ConsentNotification getNotification() {
         return notification;

@@ -56,11 +56,8 @@ public class ExpiredConsentTask extends ConsentTask {
     }
 
     private ConsentOnNotifyRequest buildConsentOnNotifyRequest(List<ConsentArtefact> consentArtefacts, UUID requestID) {
-        var requestId = UUID.randomUUID();
         var consentArtefactRequest = ConsentOnNotifyRequest
-                .builder()
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
-                .requestId(requestId);
+                .builder();
         var acknowledgements = new ArrayList<ConsentAcknowledgement>();
 
         for (ConsentArtefact consentArtefact : consentArtefacts) {
@@ -68,7 +65,7 @@ public class ExpiredConsentTask extends ConsentTask {
         }
 
         GatewayResponse gatewayResponse = new GatewayResponse(requestID.toString());
-        consentArtefactRequest.resp(gatewayResponse).build();
+        consentArtefactRequest.response(gatewayResponse).build();
         return consentArtefactRequest.acknowledgement(acknowledgements).build();
     }
 

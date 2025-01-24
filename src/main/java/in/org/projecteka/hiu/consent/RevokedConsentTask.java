@@ -57,18 +57,15 @@ public class RevokedConsentTask extends ConsentTask {
     }
 
     private ConsentOnNotifyRequest buildConsentOnNotifyRequest(List<ConsentArtefact> consentArtefacts,UUID responseRequestId) {
-        var requestId = UUID.randomUUID();
         var consentArtefactRequest = ConsentOnNotifyRequest
-                .builder()
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
-                .requestId(requestId);
+                .builder();
         var acknowledgements = new ArrayList<ConsentAcknowledgement>();
 
         for (ConsentArtefact consentArtefact : consentArtefacts) {
             acknowledgements.add(ConsentAcknowledgement.builder().consentId(consentArtefact.getConsentId()).status(OK).build());
         }
         GatewayResponse gatewayResponse = new GatewayResponse(responseRequestId.toString());
-        consentArtefactRequest.resp(gatewayResponse).build();
+        consentArtefactRequest.response(gatewayResponse).build();
         return consentArtefactRequest.acknowledgement(acknowledgements).build();
     }
 
