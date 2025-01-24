@@ -742,7 +742,7 @@ public class HiuConfiguration {
                             clientResponse.bodyToMono(String.class)
                                     .flatMap(errorBody -> Mono.error(new RuntimeException("Error fetching JWKS: " + errorBody))))
                     .bodyToMono(String.class)
-                    .timeout(ofMillis(gatewayProperties.getRequestTimeout()))
+                    .timeout(ofMillis(gatewayProperties.getRequestTimeout() + 8000))
                     .block();
 
             JWKSet jwkSet = JWKSet.parse(jwksString);
