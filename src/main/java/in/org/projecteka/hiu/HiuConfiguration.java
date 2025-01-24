@@ -113,11 +113,7 @@ import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
 import javax.net.ssl.SSLException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -134,12 +130,11 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 import static in.org.projecteka.hiu.common.Constants.*;
 import static io.lettuce.core.ReadFrom.MASTER_PREFERRED;
-import static java.time.Duration.ofDays;
-import static java.time.Duration.ofMinutes;
+import static java.time.Duration.*;
 
 @Configuration
 public class HiuConfiguration {
@@ -733,39 +728,24 @@ public class HiuConfiguration {
 
     @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "true", matchIfMissing = true)
     @Bean("userAuthenticator")
-    public Authenticator userAuthenticator(IdentityServiceProperties identityServiceProperties,
-                                           ConfigurableJWTProcessor<SecurityContext> jwtProcessor) throws IOException, ParseException {
+    public Authenticator userAuthenticator(IdentityServiceProperties identityServiceProperties, GatewayProperties gatewayProperties, ConsentManagerServiceProperties consentManagerServiceProperties,
+                                           ConfigurableJWTProcessor<SecurityContext> jwtProcessor) throws ParseException {
         try {
-            URL jwksUrl = new URL(identityServiceProperties.getJwkUrl());
+            WebClient webClient = WebClient.builder().baseUrl(identityServiceProperties.getJwkUrl()).build();
 
-            // Create HTTP connection
-            HttpURLConnection connection = (HttpURLConnection) jwksUrl.openConnection();
-            connection.setRequestMethod("GET");
+            String jwksString = webClient.get()
+                    .header(REQUEST_ID, UUID.randomUUID().toString())
+                    .header(TIMESTAMP, Utils.getISOTimestamp())
+                    .header(X_CM_ID, getCmSuffix(consentManagerServiceProperties.getSuffix()))
+                    .retrieve()
+                    .onStatus(Predicate.not(HttpStatus::is2xxSuccessful), clientResponse ->
+                            clientResponse.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new RuntimeException("Error fetching JWKS: " + errorBody))))
+                    .bodyToMono(String.class)
+                    .timeout(ofMillis(gatewayProperties.getRequestTimeout()))
+                    .block();
 
-            // Add custom headers
-            connection.setRequestProperty(REQUEST_ID, UUID.randomUUID().toString());
-            connection.setRequestProperty(TIMESTAMP, Utils.getISOTimestamp());
-            connection.setRequestProperty(X_CM_ID,"sbx");
-
-            // Set timeouts (optional)
-            connection.setConnectTimeout(10000); // 10 seconds
-            connection.setReadTimeout(10000);    // 10 seconds
-
-            // Check response code
-            int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException("Failed to fetch JWK Set, HTTP status: " + responseCode);
-            }
-
-            // Parse the JWK Set
-            String jsonString;
-            try (InputStream inputStream = connection.getInputStream();
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                jsonString = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            }
-
-            // Parse the JWK Set
-            JWKSet jwkSet = JWKSet.parse(jsonString);
+            JWKSet jwkSet = JWKSet.parse(jwksString);
             return new CMPatientAuthenticator(jwkSet, jwtProcessor);
         } catch (Exception e) {
             e.printStackTrace();
