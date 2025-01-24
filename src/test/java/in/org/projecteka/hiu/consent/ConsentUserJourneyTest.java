@@ -53,10 +53,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static in.org.projecteka.hiu.common.Constants.APP_PATH_HIU_CONSENT_REQUESTS;
-import static in.org.projecteka.hiu.common.Constants.APP_PATH_PATIENT_CONSENT_REQUEST;
-import static in.org.projecteka.hiu.common.Constants.PATH_CONSENT_REQUESTS_ON_INIT;
-import static in.org.projecteka.hiu.common.Constants.PATH_CONSENT_REQUEST_ON_STATUS;
+import static in.org.projecteka.hiu.common.Constants.*;
 import static in.org.projecteka.hiu.consent.TestBuilders.consentArtefactResponse;
 import static in.org.projecteka.hiu.consent.TestBuilders.consentRequestDetails;
 import static in.org.projecteka.hiu.consent.TestBuilders.consentStatusDetail;
@@ -207,12 +204,10 @@ class ConsentUserJourneyTest {
     @Test
     void shouldUpdateConsentRequestWithRequestId() {
         String responseFromCM = "{\n" +
-                "  \"requestId\": \"5f7a535d-a3fd-416b-b069-c97d021fbacd\",\n" +
-                "  \"timestamp\": \"2020-06-01T12:54:32.862Z\",\n" +
                 "  \"consentRequest\": {\n" +
                 "    \"id\": \"f29f0e59-8388-4698-9fe6-05db67aeac46\"\n" +
                 "  },\n" +
-                "  \"resp\": {\n" +
+                "  \"response\": {\n" +
                 "    \"requestId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n" +
                 "  }\n" +
                 "}";
@@ -237,6 +232,8 @@ class ConsentUserJourneyTest {
                 .post()
                 .uri(PATH_CONSENT_REQUESTS_ON_INIT)
                 .header("Authorization", token)
+                .header(REQUEST_ID, "5f7a535d-a3fd-416b-b069-c97d021fbacd")
+                .header(TIMESTAMP, "2020-06-01T12:54:32.862Z")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(responseFromCM)
                 .accept(MediaType.APPLICATION_JSON)
@@ -248,13 +245,11 @@ class ConsentUserJourneyTest {
     @Test
     void shouldUpdateConsentRequestStatusAsErrored() {
         String responseFromCM = "{\n" +
-                "  \"requestId\": \"5f7a535d-a3fd-416b-b069-c97d021fbacd\",\n" +
-                "  \"timestamp\": \"2020-06-01T12:54:32.862Z\",\n" +
                 "  \"error\": {\n" +
                 "    \"code\": 1000,\n" +
                 "    \"message\": \"string\"\n" +
                 "  }," +
-                "  \"resp\": {\n" +
+                "  \"response\": {\n" +
                 "    \"requestId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n" +
                 "  }\n" +
                 "}";
@@ -271,6 +266,8 @@ class ConsentUserJourneyTest {
                 .post()
                 .uri(PATH_CONSENT_REQUESTS_ON_INIT)
                 .header("Authorization", token)
+                .header(REQUEST_ID, "5f7a535d-a3fd-416b-b069-c97d021fbacd")
+                .header(TIMESTAMP, "2020-06-01T12:54:32.862Z")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(responseFromCM)
                 .accept(MediaType.APPLICATION_JSON)
@@ -284,12 +281,10 @@ class ConsentUserJourneyTest {
         when(patientRequestCache.get("3fa85f64-5717-4562-b3fc-2c963f66afa6"))
                 .thenReturn(just("3fa85f64-5717-4562-b3fc-2c963f66afa7"));
         String responseFromCM = "{\n" +
-                "  \"requestId\": \"5f7a535d-a3fd-416b-b069-c97d021fbacd\",\n" +
-                "  \"timestamp\": \"2020-06-01T12:54:32.862Z\",\n" +
                 "  \"consentRequest\": {\n" +
                 "    \"id\": \"f29f0e59-8388-4698-9fe6-05db67aeac46\"\n" +
                 "  },\n" +
-                "  \"resp\": {\n" +
+                "  \"response\": {\n" +
                 "    \"requestId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n" +
                 "  }\n" +
                 "}";
@@ -314,6 +309,8 @@ class ConsentUserJourneyTest {
                 .post()
                 .uri(PATH_CONSENT_REQUESTS_ON_INIT)
                 .header("Authorization", token)
+                .header(REQUEST_ID, "5f7a535d-a3fd-416b-b069-c97d021fbacd")
+                .header(TIMESTAMP, "2020-06-01T12:54:32.862Z")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(responseFromCM)
                 .accept(MediaType.APPLICATION_JSON)
@@ -329,8 +326,6 @@ class ConsentUserJourneyTest {
         String consentRequestId = "46ac0879-7f6d-4a5b-bc03-3f36782937a5";
         String consentId = "ae00bb0c-8e29-4fe3-a09b-4c976757d933";
         String notificationFromCM = "{\n" +
-                "  \"requestId\": \"e815dc70-0b18-4f7c-9a03-17aed83d5ac2\",\n" +
-                "  \"timestamp\": \"2020-06-04T11:01:11.045Z\",\n" +
                 "  \"notification\": {\n" +
                 "    \"consentRequestId\": \"" + consentRequestId + "\",\n" +
                 "    \"status\": \"GRANTED\",\n" +
@@ -369,6 +364,8 @@ class ConsentUserJourneyTest {
                 .post()
                 .uri(Constants.PATH_CONSENTS_HIU_NOTIFY)
                 .header("Authorization", token)
+                .header(REQUEST_ID, "e815dc70-0b18-4f7c-9a03-17aed83d5ac2")
+                .header(TIMESTAMP, "2020-06-04T11:01:11.045Z")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(notificationFromCM)
                 .accept(MediaType.APPLICATION_JSON)
@@ -439,7 +436,7 @@ class ConsentUserJourneyTest {
                 "    },\n" +
                 "    \"signature\": \"Signature of CM as defined in W3C standards; Base64 encoded\"\n" +
                 "  },\n" +
-                "  \"resp\": {\n" +
+                "  \"response\": {\n" +
                 "    \"requestId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n" +
                 "  }\n" +
                 "}";

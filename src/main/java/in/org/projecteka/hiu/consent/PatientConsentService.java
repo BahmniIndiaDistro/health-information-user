@@ -205,12 +205,10 @@ public class PatientConsentService {
                 .build();
         var patientId = hiRequest.getConsent().getPatient().getId();
         var consentRequest = ConsentRequest.builder()
-                .requestId(gatewayRequestId)
-                .timestamp(now(UTC))
                 .consent(reqInfo)
                 .build();
         var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requesterId);
-        return gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest)
+        return gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest, gatewayRequestId.toString())
                 .then(defer(() -> consentRepository.insertConsentRequestToGateway(hiuConsentRequest)));
     }
 

@@ -2,6 +2,7 @@ package in.org.projecteka.hiu.clients;
 
 import in.org.projecteka.hiu.GatewayProperties;
 import in.org.projecteka.hiu.common.Gateway;
+import in.org.projecteka.hiu.common.Utils;
 import in.org.projecteka.hiu.consent.model.ConsentArtefactRequest;
 import in.org.projecteka.hiu.consent.model.consentmanager.ConsentOnNotifyRequest;
 import in.org.projecteka.hiu.consent.model.consentmanager.ConsentRequest;
@@ -12,9 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import static in.org.projecteka.hiu.common.Constants.CORRELATION_ID;
-import static in.org.projecteka.hiu.common.Constants.PATH_PATIENT_STATUS_ON_NOTIFY;
-import static in.org.projecteka.hiu.common.Constants.X_CM_ID;
+import java.util.UUID;
+
+import static in.org.projecteka.hiu.common.Constants.*;
 import static in.org.projecteka.hiu.consent.ConsentException.creationFailed;
 import static java.time.Duration.ofMillis;
 import static java.util.function.Predicate.not;
@@ -24,9 +25,7 @@ import static reactor.core.publisher.Mono.error;
 import static reactor.core.publisher.Mono.just;
 
 public class GatewayServiceClient {
-    private static final String GATEWAY_PATH_CONSENT_REQUESTS_INIT = "/consent-requests/init";
-    private static final String GATEWAY_PATH_CONSENT_ARTEFACT_FETCH = "/consents/fetch";
-    private static final String GATEWAY_PATH_CONSENT_ON_NOTIFY = "/consents/hiu/on-notify";
+
 
     private final WebClient webClient;
     private final GatewayProperties gatewayProperties;
@@ -42,7 +41,7 @@ public class GatewayServiceClient {
         this.gateway = gateway;
     }
 
-    public Mono<Void> sendConsentRequest(String cmSuffix, ConsentRequest request) {
+    public Mono<Void> sendConsentRequest(String cmSuffix, ConsentRequest request, String requestId) {
         return gateway.token()
                 .flatMap(token -> webClient
                         .post()
@@ -50,6 +49,8 @@ public class GatewayServiceClient {
                         .header(AUTHORIZATION, token)
                         .header(X_CM_ID, cmSuffix)
                         .header(CORRELATION_ID, MDC.get(CORRELATION_ID))
+                        .header(REQUEST_ID, requestId)
+                        .header(TIMESTAMP, Utils.getISOTimestamp())
                         .body(just(request), ConsentRequest.class)
                         .retrieve()
                         .onStatus(not(HttpStatus::is2xxSuccessful),

@@ -2,10 +2,7 @@ package in.org.projecteka.hiu.consent.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import in.org.projecteka.hiu.consent.ConceptLookup;
-import in.org.projecteka.hiu.consent.model.consentmanager.AccessMode;
-import in.org.projecteka.hiu.consent.model.consentmanager.HIP;
-import in.org.projecteka.hiu.consent.model.consentmanager.HIU;
-import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
+import in.org.projecteka.hiu.consent.model.consentmanager.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -80,7 +77,7 @@ public class Consent {
                         getPurpose().getCode()))
                 .patient(getPatient())
                 .hiu(HIU.builder().id(hiuId).build())
-                .requester(Requester.builder().name(requesterId).build())
+                .requester(Requester.builder().name(requesterId).identifier(Identifier.builder().type("REGNO").value("MH1001").system("https://www.mciindia.org" ).build()).build())
                 .hiTypes(getHiTypes())
                 .careContexts(careContexts)
                 .permission(new in.org.projecteka.hiu.consent.model.consentmanager.Permission(

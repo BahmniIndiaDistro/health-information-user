@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class Purpose {
     private String text;
     private String code;
+    private final String refUri = "www.abdm.gov.in";
 }

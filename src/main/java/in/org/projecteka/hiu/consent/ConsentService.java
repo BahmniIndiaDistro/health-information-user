@@ -114,17 +114,15 @@ public class ConsentService {
         var reqInfo = hiRequest.getConsent().to(requesterId, hiuProperties.getId(), conceptValidator);
         var patientId = hiRequest.getConsent().getPatient().getId();
         var consentRequest = ConsentRequest.builder()
-                .requestId(gatewayRequestId)
-                .timestamp(now(UTC))
                 .consent(reqInfo)
                 .build();
         var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requesterId);
         return consentRepository.insertConsentRequestToGateway(hiuConsentRequest)
-                .then(gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest));
+                .then(gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest, gatewayRequestId.toString()));
     }
 
     public Mono<Void> updatePostedRequest(ConsentRequestInitResponse response) {
-        var requestId = response.getResp().getRequestId();
+        var requestId = response.getResponse().getRequestId();
         if (response.getError() != null) {
             logger.error("[ConsentService] Received error response from consent-request. HIU " +
                             "RequestId={}, Error code = {}, message={}",
@@ -158,7 +156,7 @@ public class ConsentService {
                                                   ConsentStatus oldStatus) {
         if (oldStatus.equals(ConsentStatus.POSTED)) {
             return consentRepository.updateConsentRequestStatus(
-                    consentRequestInitResponse.getResp().getRequestId(),
+                    consentRequestInitResponse.getResponse().getRequestId(),
                     ConsentStatus.REQUESTED,
                     consentRequestInitResponse.getConsentRequest().getId());
         }
