@@ -36,7 +36,6 @@ import static in.org.projecteka.hiu.common.Constants.GET_CERT;
 import static in.org.projecteka.hiu.common.Constants.INTERNAL_PATH_PATIENT_CARE_CONTEXT_INFO;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENTS_HIU_NOTIFY;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENTS_ON_FETCH;
-import static in.org.projecteka.hiu.common.Constants.PATH_CONSENTS_ON_FIND;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENT_REQUESTS_ON_INIT;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENT_REQUEST_ON_STATUS;
 import static in.org.projecteka.hiu.common.Constants.PATH_DATA_TRANSFER;
@@ -62,7 +61,6 @@ public class SecurityConfiguration {
             PATH_CONSENT_REQUESTS_ON_INIT,
             PATH_CONSENTS_HIU_NOTIFY,
             PATH_CONSENTS_ON_FETCH,
-            PATH_CONSENTS_ON_FIND,
             PATH_HEALTH_INFORMATION_HIU_ON_REQUEST,
             PATH_CONSENT_REQUEST_ON_STATUS
     };
