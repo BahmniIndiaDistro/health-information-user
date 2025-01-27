@@ -138,7 +138,7 @@ class PatientConsentServiceTest {
         var gatewayConsentArtefactResponse = gatewayConsentArtefactResponse()
                 .consent(consentArtefactResponse)
                 .error(null)
-                .resp(gatewayResponse)
+                .response(gatewayResponse)
                 .build();
         when(gatewayCache.get(requestId.toString())).thenReturn(just(consentRequestId));
         when(consentRepository.insertConsentArtefact(consentDetail, GRANTED, consentRequestId)).thenReturn(empty());

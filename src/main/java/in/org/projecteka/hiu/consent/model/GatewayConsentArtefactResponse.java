@@ -18,9 +18,7 @@ import java.util.UUID;
 @Getter
 @Builder
 public class GatewayConsentArtefactResponse {
-    private UUID requestId;
-    private String timestamp;
     private ConsentArtefactResponse consent;
     private RespError error;
-    private GatewayResponse resp;
+    private GatewayResponse response;
 }

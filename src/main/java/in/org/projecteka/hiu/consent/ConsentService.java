@@ -215,13 +215,13 @@ public class ConsentService {
         if (consentArtefactResponse.getError() != null) {
             logger.error("[ConsentService] Received error response for consent-artefact. HIU " +
                             "RequestId={}, Error code = {}, message={}",
-                    consentArtefactResponse.getResp().getRequestId(),
+                    consentArtefactResponse.getResponse().getRequestId(),
                     consentArtefactResponse.getError().getCode(),
                     consentArtefactResponse.getError().getMessage());
             return empty();
         }
         if (consentArtefactResponse.getConsent() != null) {
-            return responseCache.get(consentArtefactResponse.getResp().getRequestId())
+            return responseCache.get(consentArtefactResponse.getResponse().getRequestId())
                     .flatMap(requestId -> consentRepository.insertConsentArtefact(
                             consentArtefactResponse.getConsent().getConsentDetail(),
                             consentArtefactResponse.getConsent().getStatus(),

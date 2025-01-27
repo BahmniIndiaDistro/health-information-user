@@ -1,6 +1,7 @@
 package in.org.projecteka.hiu.clients;
 
 import in.org.projecteka.hiu.GatewayProperties;
+import in.org.projecteka.hiu.HiuProperties;
 import in.org.projecteka.hiu.common.Gateway;
 import in.org.projecteka.hiu.common.Utils;
 import in.org.projecteka.hiu.consent.model.ConsentArtefactRequest;
@@ -30,15 +31,19 @@ public class GatewayServiceClient {
     private final WebClient webClient;
     private final GatewayProperties gatewayProperties;
     private final Gateway gateway;
+
+    private final HiuProperties hiuProperties;
     private static final Logger logger = getLogger(GatewayServiceClient.class);
 
 
     public GatewayServiceClient(WebClient.Builder webClient,
                                 GatewayProperties gatewayProperties,
-                                Gateway gateway) {
+                                Gateway gateway,
+                                HiuProperties hiuProperties) {
         this.webClient = webClient.baseUrl(gatewayProperties.getBaseUrl()).build();
         this.gatewayProperties = gatewayProperties;
         this.gateway = gateway;
+        this.hiuProperties = hiuProperties;
     }
 
     public Mono<Void> sendConsentRequest(String cmSuffix, ConsentRequest request, String requestId) {
@@ -62,7 +67,7 @@ public class GatewayServiceClient {
                 .then();
     }
 
-    public Mono<Void> requestConsentArtefact(ConsentArtefactRequest request, String cmSuffix) {
+    public Mono<Void> requestConsentArtefact(ConsentArtefactRequest request, String cmSuffix, UUID requestId) {
         return gateway.token()
                 .flatMap(token -> webClient
                         .post()
@@ -70,6 +75,9 @@ public class GatewayServiceClient {
                         .header(AUTHORIZATION, token)
                         .header(X_CM_ID, cmSuffix)
                         .header(CORRELATION_ID, MDC.get(CORRELATION_ID))
+                        .header(REQUEST_ID, requestId.toString())
+                        .header(TIMESTAMP, Utils.getISOTimestamp())
+                        .header(X_HIU_ID, hiuProperties.getId())
                         .body(just(request), ConsentArtefactRequest.class)
                         .retrieve()
                         .onStatus(not(HttpStatus::is2xxSuccessful), clientResponse -> error(creationFailed()))

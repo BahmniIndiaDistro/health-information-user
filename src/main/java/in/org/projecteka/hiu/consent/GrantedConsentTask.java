@@ -40,10 +40,8 @@ public class GrantedConsentTask extends ConsentTask {
                     var consentArtefactRequest = ConsentArtefactRequest
                             .builder()
                             .consentId(reference.getId())
-                            .timestamp(LocalDateTime.now(ZoneOffset.UTC))
-                            .requestId(requestId)
                             .build();
-                    return gatewayClient.requestConsentArtefact(consentArtefactRequest, cmSuffix);
+                    return gatewayClient.requestConsentArtefact(consentArtefactRequest, cmSuffix, requestId);
                 }));
     }
 

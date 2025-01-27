@@ -821,8 +821,9 @@ public class HiuConfiguration {
     @Bean
     public GatewayServiceClient gatewayServiceClient(@Qualifier("customBuilder") WebClient.Builder builder,
                                                      GatewayProperties serviceProperties,
-                                                     Gateway gateway) {
-        return new GatewayServiceClient(builder, serviceProperties, gateway);
+                                                     Gateway gateway,
+                                                     HiuProperties hiuProperties) {
+        return new GatewayServiceClient(builder, serviceProperties, gateway, hiuProperties);
     }
 
     @Bean
