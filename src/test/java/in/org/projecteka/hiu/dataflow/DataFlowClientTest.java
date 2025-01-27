@@ -22,8 +22,6 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -81,6 +79,6 @@ public class DataFlowClientTest {
 
         RecordedRequest recordedRequest = mockWebServer.takeRequest();
         assertThat(Objects.requireNonNull(recordedRequest.getRequestUrl()).toString())
-                .isEqualTo(mockWebServer.url(Constants.PATH_HEALTH_INFORMATION_REQUEST).toString());
+                .isEqualTo(mockWebServer.url(Constants.GATEWAY_PATH_HEALTH_INFORMATION_REQUEST).toString());
     }
 }

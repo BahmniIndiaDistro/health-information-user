@@ -28,7 +28,7 @@ public class DataFlowClient {
     public Mono<Void> initiateDataFlowRequest(GatewayDataFlowRequest dataFlowRequest, String token, String cmSuffix, String requestId) {
         return webClientBuilder.build()
                 .post()
-                .uri(gatewayProperties.getBaseUrl() + PATH_HEALTH_INFORMATION_REQUEST)
+                .uri(gatewayProperties.getBaseUrl() + GATEWAY_PATH_HEALTH_INFORMATION_REQUEST)
                 .header("Authorization", token)
                 .header("X-CM-ID", cmSuffix)
                 .header(CORRELATION_ID, MDC.get(CORRELATION_ID))

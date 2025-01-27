@@ -6,7 +6,6 @@ public class Constants {
     public static final String PATH_CONSENT_REQUESTS_ON_INIT = "/api/v3/hiu/consent/request/on-init";
     public static final String PATH_CONSENTS_HIU_NOTIFY = "/api/v3/hiu/consent/request/notify";
     public static final String PATH_CONSENTS_ON_FETCH = "/api/v3/hiu/consent/on-fetch";
-    public static final String PATH_HEALTH_INFORMATION_REQUEST = "/api/hiecm/data-flow/v3/health-information/request";
     public static final String PATH_HEALTH_INFORMATION_HIU_ON_REQUEST = "/api/v3/hiu/health-information/on-request";
     public static final String PATH_HEARTBEAT = CURRENT_VERSION + "/heartbeat";
     public static final String X_CM_ID = "X-CM-ID";
@@ -41,6 +40,7 @@ public class Constants {
     public static final String GATEWAY_PATH_CONSENT_REQUESTS_INIT = "/api/hiecm/consent/v3/request/init";
     public static final String GATEWAY_PATH_CONSENT_ARTEFACT_FETCH =  "/api/hiecm/consent/v3/fetch";
     public static final String GATEWAY_PATH_CONSENT_ON_NOTIFY = "/api/hiecm/consent/v3/request/hiu/on-notify";
+    public static final String GATEWAY_PATH_HEALTH_INFORMATION_REQUEST = "/api/hiecm/data-flow/v3/health-information/request";
     public static final String REQUEST_ID = "REQUEST-ID";
     public static final String TIMESTAMP = "TIMESTAMP";
     public static final String X_HIU_ID = "X-HIU-ID";
