@@ -1,5 +1,6 @@
 package in.org.projecteka.hiu.dataflow;
 
+import in.org.projecteka.hiu.common.Utils;
 import in.org.projecteka.hiu.dataflow.model.DataFlowRequest;
 import in.org.projecteka.hiu.dataflow.model.DataFlowRequestKeyMaterial;
 import in.org.projecteka.hiu.dataflow.model.DataPartDetail;
@@ -215,7 +216,7 @@ public class DataFlowRepository {
                             Map<String, Object> flowRequestTransaction = new HashMap<>();
                             flowRequestTransaction.put("consentRequestId", row.getString("consent_request_id"));
                             flowRequestTransaction.put("consentExpiryDate",
-                                    LocalDateTime.parse(row.getString("consent_expiry_date")));
+                                    Utils.parseTimeStamp(row.getString("consent_expiry_date")));
                             var request = row.getValue("data_flow_request").toString();
                             flowRequestTransaction.put("dataFlowRequest", to(request, DataFlowRequest.class));
                             monoSink.success(flowRequestTransaction);

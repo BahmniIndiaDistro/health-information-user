@@ -66,7 +66,7 @@ public class DataFlowService {
     }
 
     public Mono<Void> updateDataFlowRequest(DataFlowRequestResult dataFlowRequestResult) {
-        String requestId = dataFlowRequestResult.getResp().getRequestId();
+        String requestId = dataFlowRequestResult.getResponse().getRequestId();
         if (dataFlowRequestResult.getError() != null) {
             logger.error("[DataFlowService] Received error response for data flow request. HIU " +
                             "requestId={}, error_code= {}, message= {}",

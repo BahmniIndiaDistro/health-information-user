@@ -111,7 +111,7 @@ class DataFlowRequestListenerTest {
         when(mockMessage.getBody()).thenReturn(traceableMessageBytes);
         when(dataFlowProperties.isUsingGateway()).thenReturn(true);
         when(gateway.token()).thenReturn(Mono.just("temp"));
-        when(dataFlowClient.initiateDataFlowRequest(any(GatewayDataFlowRequest.class),anyString(),anyString()))
+        when(dataFlowClient.initiateDataFlowRequest(any(GatewayDataFlowRequest.class),anyString(),anyString(), anyString()))
                 .thenReturn(empty());
         when(consentRepository.getPatientId(anyString())).thenReturn(Mono.just("temp@ncg"));
         when(dataFlowRepository.addDataFlowRequest(anyString(),anyString(),any())).thenReturn(empty());
@@ -125,7 +125,7 @@ class DataFlowRequestListenerTest {
         MessageListener messageListener = messageListenerCaptor.getValue();
 
         messageListener.onMessage(mockMessage);
-        verify(dataFlowClient,times(1)).initiateDataFlowRequest(any(),any(),any());
+        verify(dataFlowClient,times(1)).initiateDataFlowRequest(any(),any(),any(),any());
         verify(dataFlowRepository,times(1)).addDataFlowRequest(anyString(),anyString(),any());
     }
 }

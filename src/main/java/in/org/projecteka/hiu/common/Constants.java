@@ -7,7 +7,8 @@ public class Constants {
     public static final String PATH_CONSENTS_HIU_NOTIFY = "/api/v3/hiu/consent/request/notify";
     public static final String PATH_CONSENTS_ON_FETCH = "/api/v3/hiu/consent/on-fetch";
     public static final String PATH_CONSENTS_ON_FIND = CURRENT_VERSION + "/patients/on-find";
-    public static final String PATH_HEALTH_INFORMATION_HIU_ON_REQUEST = CURRENT_VERSION + "/health-information/hiu/on-request";
+    public static final String PATH_HEALTH_INFORMATION_REQUEST = "/api/hiecm/data-flow/v3/health-information/request";
+    public static final String PATH_HEALTH_INFORMATION_HIU_ON_REQUEST = "/api/v3/hiu/health-information/on-request";
     public static final String PATH_HEARTBEAT = CURRENT_VERSION + "/heartbeat";
     public static final String X_CM_ID = "X-CM-ID";
     public static final String PATH_DATA_TRANSFER = "/data/notification";

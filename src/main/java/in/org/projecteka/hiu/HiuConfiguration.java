@@ -551,8 +551,9 @@ public class HiuConfiguration {
 
     @Bean
     public DataFlowClient dataFlowClient(@Qualifier("customBuilder") WebClient.Builder builder,
-                                         GatewayProperties gatewayProperties) {
-        return new DataFlowClient(builder, gatewayProperties);
+                                         GatewayProperties gatewayProperties,
+                                         HiuProperties hiuProperties) {
+        return new DataFlowClient(builder, gatewayProperties, hiuProperties);
     }
 
     @Bean
