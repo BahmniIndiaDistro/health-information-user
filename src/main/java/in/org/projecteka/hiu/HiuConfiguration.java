@@ -689,8 +689,8 @@ public class HiuConfiguration {
     @Bean
     public GatewayAuthenticationClient centralRegistryClient(
             @Qualifier("customBuilder") WebClient.Builder builder,
-            GatewayProperties gatewayProperties) {
-        return new GatewayAuthenticationClient(builder, gatewayProperties.getBaseUrl());
+            GatewayProperties gatewayProperties, ConsentManagerServiceProperties consentManagerServiceProperties) {
+        return new GatewayAuthenticationClient(builder, gatewayProperties.getBaseUrl(), consentManagerServiceProperties);
     }
 
     @Bean
