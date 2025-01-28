@@ -45,6 +45,7 @@ public class Constants {
     public static final String REQUEST_ID = "REQUEST-ID";
     public static final String TIMESTAMP = "TIMESTAMP";
     public static final String X_HIU_ID = "X-HIU-ID";
+    public static final String CONSENT_PURPOSE_REF_URI = "www.abdm.gov.in";
 
     public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
