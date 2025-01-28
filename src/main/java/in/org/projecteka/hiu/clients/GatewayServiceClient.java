@@ -94,6 +94,8 @@ public class GatewayServiceClient {
                         .header(AUTHORIZATION, token)
                         .header(X_CM_ID, cmSuffix)
                         .header(CORRELATION_ID, MDC.get(CORRELATION_ID))
+                        .header(REQUEST_ID, UUID.randomUUID().toString())
+                        .header(TIMESTAMP, Utils.getISOTimestamp())
                         .body(just(request), ConsentOnNotifyRequest.class)
                         .retrieve()
                         .onStatus(not(HttpStatus::is2xxSuccessful),
