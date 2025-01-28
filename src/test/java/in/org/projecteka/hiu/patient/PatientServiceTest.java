@@ -109,6 +109,7 @@ class PatientServiceTest {
         var id = "temp@ncg";
         var fullName = string();
         var searchResponse = abhaAddressSearchResponse().abhaAddress(id).fullName(fullName).build();
+        when(cache.put(any(),any())).thenReturn(Mono.empty());
         when(cache.get(id)).thenReturn(empty());
         when(abhaAddressServiceClient.findPatientWith(eq(new FindPatientRequest(id)), any())).thenReturn(just(searchResponse));
         var patientService = new PatientService(gatewayServiceClient,

@@ -32,7 +32,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static reactor.core.publisher.Mono.defer;
 import static reactor.core.publisher.Mono.empty;
 import static reactor.core.publisher.Mono.error;
-import static reactor.core.publisher.Mono.just;
 
 @AllArgsConstructor
 public class PatientService {
@@ -47,8 +46,7 @@ public class PatientService {
 
     private Mono<Patient> apply(AbhaAddressSearchResponse response) {
         Patient patient = response.toPatient();
-        cache.put(response.getAbhaAddress(),patient);
-        return just(patient);
+        return cache.put(patient.getIdentifier(),patient).thenReturn(patient);
     }
 
     public Mono<Patient> tryFind(String id) {
