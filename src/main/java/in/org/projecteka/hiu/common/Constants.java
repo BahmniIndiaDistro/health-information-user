@@ -21,8 +21,6 @@ public class Constants {
     public static final String API_PATH_GET_HEALTH_INFO_STATUS = "/v1/patient/health-information/status";
     public static final String INTERNAL_PATH_PATIENT_CARE_CONTEXT_INFO = "/internal/patient/hip/data-transfer-status";
     public static final String PATH_CONSENT_REQUEST_ON_STATUS = CURRENT_VERSION + "/consent-requests/on-status";
-    public static final String PATH_ON_AUTH_INIT = CURRENT_VERSION + "/users/auth/on-init";
-    public static final String PATH_ON_AUTH_CONFIRM = CURRENT_VERSION + "/users/auth/on-confirm";
     public static final String GET_CERT = "/certs";
     public static final String PATH_PATIENT_STATUS_NOTIFY = "/v0.5/patients/status/notify";
     public static final String PATH_PATIENT_STATUS_ON_NOTIFY = "/v0.5/patients/status/on-notify";

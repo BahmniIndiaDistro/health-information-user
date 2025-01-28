@@ -42,8 +42,6 @@ import static in.org.projecteka.hiu.common.Constants.PATH_DATA_TRANSFER;
 import static in.org.projecteka.hiu.common.Constants.PATH_HEALTH_INFORMATION_HIU_ON_REQUEST;
 import static in.org.projecteka.hiu.common.Constants.PATH_HEARTBEAT;
 import static in.org.projecteka.hiu.common.Constants.PATH_READINESS;
-import static in.org.projecteka.hiu.common.Constants.PATH_ON_AUTH_CONFIRM;
-import static in.org.projecteka.hiu.common.Constants.PATH_ON_AUTH_INIT;
 import static in.org.projecteka.hiu.user.Role.GATEWAY;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.of;
@@ -82,8 +80,6 @@ public class SecurityConfiguration {
             PATH_HEARTBEAT,
             PATH_READINESS,
             INTERNAL_PATH_PATIENT_CARE_CONTEXT_INFO,
-            PATH_ON_AUTH_INIT,
-            PATH_ON_AUTH_CONFIRM,
             GET_CERT,
             "/sessions",
             "/config"};
