@@ -204,8 +204,6 @@ public class HealthDataProcessor {
                                                                            List<StatusResponse> statusResponses,
                                                                            SessionStatus sessionStatus) {
         return HealthInfoNotificationRequest.builder()
-                .requestId(UUID.randomUUID())
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
                 .notification(Notification.builder()
                         .consentId(context.getConsentId())
                         .transactionId(context.getTransactionId())

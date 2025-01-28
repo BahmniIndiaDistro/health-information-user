@@ -1,6 +1,8 @@
 package in.org.projecteka.hiu.clients;
 
 import in.org.projecteka.hiu.GatewayProperties;
+import in.org.projecteka.hiu.common.Constants;
+import in.org.projecteka.hiu.common.Utils;
 import in.org.projecteka.hiu.dataprocessor.model.HealthInfoNotificationRequest;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -8,11 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Properties;
+import java.util.UUID;
 
 import static in.org.projecteka.hiu.ClientError.failedToNotifyCM;
-import static in.org.projecteka.hiu.common.Constants.CORRELATION_ID;
-import static in.org.projecteka.hiu.common.Constants.X_CM_ID;
+import static in.org.projecteka.hiu.common.Constants.*;
 import static java.util.function.Predicate.not;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -56,10 +57,12 @@ public class HealthInformationClient {
                                        String consentManagerId) {
         return client
                 .post()
-                .uri(gatewayProperties.getBaseUrl() + "/health-information/notify")
+                .uri(gatewayProperties.getBaseUrl() + Constants.GATEWAY_PATH_HEALTH_INFORMATION_NOTIFY)
                 .header(AUTHORIZATION, token)
                 .header(X_CM_ID, consentManagerId)
                 .header(CORRELATION_ID, MDC.get(CORRELATION_ID))
+                .header(REQUEST_ID, UUID.randomUUID().toString())
+                .header(TIMESTAMP, Utils.getISOTimestamp())
                 .body(Mono.just(notificationRequest), HealthInfoNotificationRequest.class)
                 .retrieve()
                 .onStatus(not(HttpStatus::is2xxSuccessful),

@@ -41,6 +41,7 @@ public class Constants {
     public static final String GATEWAY_PATH_CONSENT_ARTEFACT_FETCH =  "/api/hiecm/consent/v3/fetch";
     public static final String GATEWAY_PATH_CONSENT_ON_NOTIFY = "/api/hiecm/consent/v3/request/hiu/on-notify";
     public static final String GATEWAY_PATH_HEALTH_INFORMATION_REQUEST = "/api/hiecm/data-flow/v3/health-information/request";
+    public static final String GATEWAY_PATH_HEALTH_INFORMATION_NOTIFY = "/api/hiecm/data-flow/v3/health-information/notify";
     public static final String REQUEST_ID = "REQUEST-ID";
     public static final String TIMESTAMP = "TIMESTAMP";
     public static final String X_HIU_ID = "X-HIU-ID";
