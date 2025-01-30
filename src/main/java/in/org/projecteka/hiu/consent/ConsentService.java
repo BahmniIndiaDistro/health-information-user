@@ -240,7 +240,7 @@ public class ConsentService {
         if (consentStatusRequest.getError() != null) {
             logger.error("[ConsentService] Received error response for consent-status. HIU " +
                             "RequestId={}, Error code = {}, message={}",
-                    consentStatusRequest.getResp().getRequestId(),
+                    consentStatusRequest.getResponse().getRequestId(),
                     consentStatusRequest.getError().getCode(),
                     consentStatusRequest.getError().getMessage());
             return empty();
