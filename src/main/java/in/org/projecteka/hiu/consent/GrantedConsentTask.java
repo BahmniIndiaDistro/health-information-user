@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.UUID;
 
 import static in.org.projecteka.hiu.common.Constants.getCmSuffix;
@@ -56,6 +55,8 @@ public class GrantedConsentTask extends ConsentTask {
                 .flatMap(consentRequest -> consentRepository.updateConsentRequestStatus(GRANTED,
                         consentRequestId).thenReturn(consentRequest))
                 .map(consentRequest -> getCmSuffix(consentRequest.getPatient().getId()))
+                .flatMap(cmSuffix -> gatewayClient.sendConsentOnNotify(cmSuffix, buildConsentOnNotifyRequestForReference(consentNotification.getConsentArtefacts(), requestID))
+                        .thenReturn(cmSuffix))
                 .flatMapMany(cmSuffix -> fromIterable(consentNotification.getConsentArtefacts())
                         .flatMap(reference -> perform(reference, consentRequestId, cmSuffix)))
                 .ignoreElements();
