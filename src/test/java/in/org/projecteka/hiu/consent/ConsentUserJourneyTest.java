@@ -16,11 +16,13 @@ import in.org.projecteka.hiu.consent.model.ConsentStatus;
 import in.org.projecteka.hiu.consent.model.Patient;
 import in.org.projecteka.hiu.consent.model.PatientConsentRequest;
 import in.org.projecteka.hiu.consent.model.consentmanager.Permission;
+import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
 import in.org.projecteka.hiu.dataflow.DataFlowDeleteListener;
 import in.org.projecteka.hiu.dataflow.DataFlowRequestListener;
 import in.org.projecteka.hiu.dataflow.HealthInfoManager;
 import in.org.projecteka.hiu.dataprocessor.DataAvailabilityListener;
 import in.org.projecteka.hiu.user.Role;
+import in.org.projecteka.hiu.user.UserService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.jetbrains.annotations.NotNull;
@@ -149,6 +151,9 @@ class ConsentUserJourneyTest {
     @MockBean
     HealthInfoManager healthInfoManager;
 
+    @MockBean
+    UserService userService;
+
 
     @AfterAll
     static void tearDown() throws IOException {
@@ -183,8 +188,10 @@ class ConsentUserJourneyTest {
         var consentRequestDetails = consentRequestDetails().build();
         consentRequestDetails.getConsent().getPatient().setId("hinapatel79@ncg");
         var token = randomString();
-        var caller = new Caller("testUser", false, Role.ADMIN.toString(), true);
+        var userName = "testUser";
+        var caller = new Caller(userName, false, Role.ADMIN.toString(), true);
         when(authenticator.verify(token)).thenReturn(just(caller));
+        when(userService.toRequester(userName)).thenReturn(just(Requester.builder().name(userName).build()));
         var dateEraseAt = LocalDateTime.of(LocalDate.of(2050, 1, 1), LocalTime.of(10, 30));
         consentRequestDetails.getConsent().getPermission().setDataEraseAt(dateEraseAt);
         when(consentRepository.insertConsentRequestToGateway(any())).thenReturn(Mono.create(MonoSink::success));

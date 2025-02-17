@@ -15,6 +15,7 @@ import in.org.projecteka.hiu.consent.model.ConsentStatusRequest;
 import in.org.projecteka.hiu.consent.model.GatewayConsentArtefactResponse;
 import in.org.projecteka.hiu.consent.model.HiuConsentNotificationRequest;
 import in.org.projecteka.hiu.consent.model.consentmanager.ConsentRequest;
+import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
 import in.org.projecteka.hiu.patient.PatientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,22 +102,23 @@ public class ConsentService {
                 .then();
     }
 
-    public Mono<Void> createRequest(String requesterId, ConsentRequestData consentRequestData) {
+    public Mono<Void> createRequest(Requester requester, ConsentRequestData consentRequestData) {
         var gatewayRequestId = UUID.randomUUID();
         return validateConsentRequest(consentRequestData)
-                .then(sendConsentRequestToGateway(requesterId, consentRequestData, gatewayRequestId));
+                .then(sendConsentRequestToGateway(requester, consentRequestData, gatewayRequestId));
     }
 
     private Mono<Void> sendConsentRequestToGateway(
-            String requesterId,
+            Requester requester,
             ConsentRequestData hiRequest,
             UUID gatewayRequestId) {
-        var reqInfo = hiRequest.getConsent().to(requesterId, hiuProperties.getId(), conceptValidator);
+
+        var reqInfo = hiRequest.getConsent().to(requester, hiuProperties.getId(), conceptValidator);
         var patientId = hiRequest.getConsent().getPatient().getId();
         var consentRequest = ConsentRequest.builder()
                 .consent(reqInfo)
                 .build();
-        var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requesterId);
+        var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requester.getName());
         return consentRepository.insertConsentRequestToGateway(hiuConsentRequest)
                 .then(gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest, gatewayRequestId.toString()));
     }

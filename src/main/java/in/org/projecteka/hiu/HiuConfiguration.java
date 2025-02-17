@@ -54,6 +54,7 @@ import in.org.projecteka.hiu.patient.PatientService;
 import in.org.projecteka.hiu.user.JWTGenerator;
 import in.org.projecteka.hiu.user.SessionService;
 import in.org.projecteka.hiu.user.UserRepository;
+import in.org.projecteka.hiu.user.UserService;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import io.netty.handler.ssl.SslContext;
@@ -807,6 +808,11 @@ public class HiuConfiguration {
     public UserRepository userRepository(@Qualifier("readWriteClient") PgPool readWriteClient,
                                          @Qualifier("readOnlyClient") PgPool readOnlyClient) {
         return new UserRepository(readWriteClient, readOnlyClient);
+    }
+
+    @Bean
+    public UserService userService(UserRepository userRepository){
+        return new UserService(userRepository);
     }
 
     @Bean

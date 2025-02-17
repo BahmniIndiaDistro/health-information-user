@@ -66,7 +66,7 @@ public class Consent {
                 .build();
     }
 
-    public in.org.projecteka.hiu.consent.model.consentmanager.Consent to(String requesterId,
+    public in.org.projecteka.hiu.consent.model.consentmanager.Consent to(Requester requester,
                                                                          String hiuId,
                                                                          ConceptLookup conceptLookup) {
 
@@ -77,7 +77,7 @@ public class Consent {
                         getPurpose().getCode()))
                 .patient(getPatient())
                 .hiu(HIU.builder().id(hiuId).build())
-                .requester(Requester.builder().name(requesterId).identifier(Identifier.builder().type("REGNO").value("MH1001").system("https://www.mciindia.org" ).build()).build())
+                .requester(requester)
                 .hiTypes(getHiTypes())
                 .careContexts(careContexts)
                 .permission(new in.org.projecteka.hiu.consent.model.consentmanager.Permission(

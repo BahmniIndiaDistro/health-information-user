@@ -3,8 +3,11 @@ package in.org.projecteka.hiu.consent;
 import in.org.projecteka.hiu.HiuProperties;
 import in.org.projecteka.hiu.clients.GatewayServiceClient;
 import in.org.projecteka.hiu.clients.Patient;
+import in.org.projecteka.hiu.common.Constants;
 import in.org.projecteka.hiu.common.cache.CacheAdapter;
 import in.org.projecteka.hiu.consent.model.ConsentRequestData;
+import in.org.projecteka.hiu.consent.model.consentmanager.Identifier;
+import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -85,6 +88,12 @@ class ConsentServiceTest {
     @Test
     void shouldSaveAndPostConsentRequest() {
         String requesterId = randomString();
+        Requester requester = Requester.builder()
+                .name(requesterId)
+                .identifier(Identifier.builder()
+                        .type(Constants.REQUESTER_IDENTIFIER_TYPE)
+                        .system(Constants.REQUESTER_IDENTIFIER_SYSTEM).value("TEST123").build())
+                .build();
         var token = randomString();
         ConsentRequestData consentRequestData = consentRequestDetails().build();
         consentRequestData.getConsent().getPatient().setId("hinapatel79@ncg");
@@ -94,7 +103,7 @@ class ConsentServiceTest {
                 .thenReturn(empty());
         when(consentRepository.insertConsentRequestToGateway(any())).thenReturn(Mono.create(MonoSink::success));
 
-        Mono<Void> request = consentService.createRequest(requesterId, consentRequestData);
+        Mono<Void> request = consentService.createRequest(requester, consentRequestData);
 
         StepVerifier.create(request).expectComplete().verify();
     }

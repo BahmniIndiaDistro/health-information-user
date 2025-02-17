@@ -9,6 +9,7 @@ import in.org.projecteka.hiu.consent.model.ConsentRequestRepresentation;
 import in.org.projecteka.hiu.consent.model.ConsentStatusRequest;
 import in.org.projecteka.hiu.consent.model.GatewayConsentArtefactResponse;
 import in.org.projecteka.hiu.consent.model.HiuConsentNotificationRequest;
+import in.org.projecteka.hiu.user.UserService;
 import lombok.AllArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
@@ -30,13 +31,19 @@ import static in.org.projecteka.hiu.common.Constants.*;
 public class ConsentController {
     private final ConsentService consentService;
 
+    private final UserService userService;
+
     @PostMapping(APP_PATH_HIU_CONSENT_REQUESTS)
-    public Mono<ResponseEntity<HttpStatus>> postConsentRequest(@RequestBody ConsentRequestData consentRequestData) {
+    public Mono<ResponseEntity<Object>> postConsentRequest(@RequestBody ConsentRequestData consentRequestData) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(securityContext -> (Caller) securityContext.getAuthentication().getPrincipal())
                 .map(Caller::getUsername)
-                .flatMap(requesterId -> consentService.createRequest(requesterId, consentRequestData))
-                .thenReturn(new ResponseEntity<>(HttpStatus.ACCEPTED));
+                .flatMap(userService::toRequester)
+                .flatMap(requester -> consentService.createRequest(requester, consentRequestData))
+                .thenReturn(new ResponseEntity<>(HttpStatus.ACCEPTED))
+                .onErrorResume(IllegalArgumentException.class, e ->
+                        Mono.just(ResponseEntity.badRequest().body(e.getMessage()))
+                );
     }
 
     @PostMapping(Constants.PATH_CONSENT_REQUESTS_ON_INIT)
