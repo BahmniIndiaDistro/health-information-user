@@ -26,7 +26,8 @@ public enum ErrorCode {
     INVALID_TOKEN(4402),
     SERVICE_DOWN(4503),
     UNABLE_TO_PARSE_KEY(4504),
-    NO_CERT_FOUND(4505);
+    NO_CERT_FOUND(4505),
+    DEPRECATED_API(410);
 
     private final int value;
 

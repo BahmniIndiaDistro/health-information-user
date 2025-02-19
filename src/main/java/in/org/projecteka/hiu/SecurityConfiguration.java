@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static in.org.projecteka.hiu.ClientError.unauthorizedRequester;
+import static in.org.projecteka.hiu.ClientError.deprecatedApi;
 import static in.org.projecteka.hiu.common.Constants.API_PATH_FETCH_PATIENT_HEALTH_INFO;
 import static in.org.projecteka.hiu.common.Constants.API_PATH_GET_HEALTH_INFO_STATUS;
 import static in.org.projecteka.hiu.common.Constants.APP_PATH_PATIENT_CONSENT_REQUEST;
@@ -63,11 +64,13 @@ public class SecurityConfiguration {
             PATH_CONSENT_REQUEST_ON_STATUS
     };
 
+    // Deprecated: These APIs are no longer supported and will return a 410 Gone status
     private static final List<Map.Entry<HttpMethod, String>> CM_PATIENT_APIS = List.of(
             Map.entry(HttpMethod.POST, APP_PATH_PATIENT_CONSENT_REQUEST),
             Map.entry(HttpMethod.GET, "/v1/patient/health-information/fetch/*/attachments/*"),
             Map.entry(HttpMethod.POST, API_PATH_FETCH_PATIENT_HEALTH_INFO),
             Map.entry(HttpMethod.POST, API_PATH_GET_HEALTH_INFO_STATUS));
+
     private static final String[] ALLOWED_LISTS = new String[]{"/**.json",
 
             "/ValueSet",
@@ -141,10 +144,7 @@ public class SecurityConfiguration {
             }
 
             if (isCMPatientRequest(path, exchange.getRequest().getMethod())) {
-                var patientToken = exchange.getRequest().getHeaders().getFirst(authHeader);
-                return isEmpty(patientToken)
-                        ? error(unauthorizedRequester())
-                        : checkUserToken(patientToken).switchIfEmpty(error(unauthorizedRequester()));
+                return error(deprecatedApi());
             }
 
             var token = exchange.getRequest().getHeaders().getFirst(AUTHORIZATION);

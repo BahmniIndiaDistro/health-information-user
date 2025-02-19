@@ -127,6 +127,12 @@ public class ClientError extends Throwable {
                 new ErrorRepresentation(new Error(NETWORK_SERVICE_ERROR, CANNOT_PROCESS_REQUEST_TRY_LATER)));
     }
 
+    public static ClientError deprecatedApi() {
+        return new ClientError(HttpStatus.GONE,
+                new ErrorRepresentation(new Error(ErrorCode.DEPRECATED_API, 
+                        "This API has been deprecated and is no longer available. Please refer to the latest API documentation.")));
+    }
+
     public static ClientError paginationNotSupported() {
         return new ClientError(BAD_REQUEST,
                 new ErrorRepresentation(new Error(INVALID_REQUEST, "Multi page data transfer is not supported yet.")));
