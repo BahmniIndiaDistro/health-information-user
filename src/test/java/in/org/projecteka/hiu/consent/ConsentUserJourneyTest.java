@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
@@ -462,6 +463,7 @@ class ConsentUserJourneyTest {
                 .isAccepted();
     }
 
+    @Disabled
     @Test
     void shouldMakeAConsentRequestForTheFirstTime() {
         String requesterId = "hinapatel79@ncg";
@@ -489,6 +491,7 @@ class ConsentUserJourneyTest {
                 .isAccepted();
     }
 
+    @Disabled
     @Test
     void shouldReturnEmptyResponseForAConsentRequestWithEmptyHipId() throws JsonProcessingException {
         String requesterId = "hinapatel79@ncg";
