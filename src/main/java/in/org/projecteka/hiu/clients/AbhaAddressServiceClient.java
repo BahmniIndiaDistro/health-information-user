@@ -32,10 +32,10 @@ public class AbhaAddressServiceClient {
     private static final Logger logger = getLogger(AbhaAddressServiceClient.class);
 
 
-    public AbhaAddressServiceClient(WebClient.Builder webClient,
+    public AbhaAddressServiceClient(WebClient.Builder webClientBuilder,
                                     GatewayProperties gatewayProperties,
                                     Gateway gateway) {
-        this.webClient = webClient.baseUrl(gatewayProperties.getAbhaAddressBaseUrl()).build();
+        this.webClient = webClientBuilder.baseUrl(gatewayProperties.getAbhaAddressBaseUrl()).build();
         this.gatewayProperties = gatewayProperties;
         this.gateway = gateway;
     }
