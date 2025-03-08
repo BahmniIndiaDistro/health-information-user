@@ -21,12 +21,11 @@ import java.util.UUID;
 import static in.org.projecteka.hiu.common.Constants.*;
 import static java.lang.String.format;
 
-@AllArgsConstructor
 public class GatewayAuthenticationClient {
     private final WebClient webclient;
 
     private final ConsentManagerServiceProperties consentManagerServiceProperties;
-    private final Logger logger = LogManager.getLogger(GatewayAuthenticationClient.class);
+    private static final Logger logger = LogManager.getLogger(GatewayAuthenticationClient.class);
 
     public GatewayAuthenticationClient(WebClient.Builder webClient, String baseUrl,
                                        ConsentManagerServiceProperties consentManagerServiceProperties) {
