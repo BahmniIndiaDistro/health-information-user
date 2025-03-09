@@ -52,6 +52,8 @@ public class Constants {
 
     public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
+    public static final String HPIN_NOT_FOUND_ERROR = "ABDM Health Professional Identifier value not found for user";
+
     private Constants() {
     }
 

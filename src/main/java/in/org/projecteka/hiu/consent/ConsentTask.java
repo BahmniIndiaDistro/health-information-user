@@ -61,6 +61,9 @@ public abstract class ConsentTask {
     }
 
     public String getCmSuffixFromArtefact(List<ConsentArtefact> consentArtefacts) {
+        if(consentArtefacts.isEmpty()){
+            throw new RuntimeException("Consent artefacts are empty. Unable to get CM Suffix.");
+        }
         ConsentArtefact consentArtefact = consentArtefacts.get(0);
         return getCmSuffix(consentArtefact.getPatient().getId());
     }

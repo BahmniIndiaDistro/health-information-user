@@ -1,6 +1,7 @@
 package in.org.projecteka.hiu.user;
 
 import in.org.projecteka.hiu.common.Constants;
+import in.org.projecteka.hiu.common.exception.HpinNotFoundException;
 import in.org.projecteka.hiu.consent.model.consentmanager.Identifier;
 
 import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
@@ -12,8 +13,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public static String HPIN_NOT_FOUND_ERROR = "ABDM Health Professional Identifier value not found for user";
-
     public Mono<Requester> toRequester(String username){
         return getIdentifierForUser(username).map(identifier -> Requester.builder()
                 .name(username)
@@ -23,11 +22,11 @@ public class UserService {
 
     private Mono<Identifier> getIdentifierForUser(String username){
         return userRepository.getHpinForUser(username)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException(
-                        HPIN_NOT_FOUND_ERROR + username)))
+                .switchIfEmpty(Mono.error(new HpinNotFoundException(
+                        Constants.HPIN_NOT_FOUND_ERROR + username)))
                 .flatMap(identifierValue -> {
                     if (identifierValue.trim().isEmpty()) {
-                        return Mono.error(new IllegalArgumentException(HPIN_NOT_FOUND_ERROR + username));
+                        return Mono.error(new HpinNotFoundException(Constants.HPIN_NOT_FOUND_ERROR + username));
                     }
                     return Mono.just(Identifier.builder()
                             .type(Constants.REQUESTER_IDENTIFIER_TYPE)

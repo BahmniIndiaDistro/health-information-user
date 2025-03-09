@@ -1,6 +1,7 @@
 package in.org.projecteka.hiu.user;
 
 import in.org.projecteka.hiu.common.Constants;
+import in.org.projecteka.hiu.common.exception.HpinNotFoundException;
 import in.org.projecteka.hiu.consent.model.consentmanager.Identifier;
 import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,8 +56,8 @@ class UserServiceTest {
 
         StepVerifier.create(userService.toRequester(username))
                 .expectErrorMatches(error ->
-                    error instanceof IllegalArgumentException &&
-                    error.getMessage().equals(UserService.HPIN_NOT_FOUND_ERROR + username))
+                    error instanceof HpinNotFoundException &&
+                    error.getMessage().equals(Constants.HPIN_NOT_FOUND_ERROR + username))
                 .verify();
     }
 
@@ -67,8 +68,8 @@ class UserServiceTest {
 
         StepVerifier.create(userService.toRequester(username))
                 .expectErrorMatches(error ->
-                    error instanceof IllegalArgumentException &&
-                    error.getMessage().equals(UserService.HPIN_NOT_FOUND_ERROR + username))
+                    error instanceof HpinNotFoundException &&
+                    error.getMessage().equals(Constants.HPIN_NOT_FOUND_ERROR + username))
                 .verify();
     }
 

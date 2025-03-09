@@ -3,6 +3,7 @@ package in.org.projecteka.hiu.consent;
 import in.org.projecteka.hiu.Caller;
 import in.org.projecteka.hiu.common.Constants;
 import in.org.projecteka.hiu.common.Utils;
+import in.org.projecteka.hiu.common.exception.HpinNotFoundException;
 import in.org.projecteka.hiu.consent.model.ConsentRequestData;
 import in.org.projecteka.hiu.consent.model.ConsentRequestInitResponse;
 import in.org.projecteka.hiu.consent.model.ConsentRequestRepresentation;
@@ -41,7 +42,7 @@ public class ConsentController {
                 .flatMap(userService::toRequester)
                 .flatMap(requester -> consentService.createRequest(requester, consentRequestData))
                 .thenReturn(new ResponseEntity<>(HttpStatus.ACCEPTED))
-                .onErrorResume(IllegalArgumentException.class, e ->
+                .onErrorResume(HpinNotFoundException.class, e ->
                         Mono.just(ResponseEntity.badRequest().body(e.getMessage()))
                 );
     }
