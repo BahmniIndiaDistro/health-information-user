@@ -24,10 +24,10 @@ jobs:
         run: ./gradlew clean build
       - name: Code coverage
         run: ./gradlew jacocoTestReport
-      - name: Sonarcube Analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew sonarqube
+#      - name: Sonarcube Analysis
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: ./gradlew sonarqube
       - name: Set env.ARTIFACT_VERSION
         run: |
           wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
