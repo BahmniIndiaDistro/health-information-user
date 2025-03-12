@@ -30,10 +30,6 @@ jobs:
         with:
           java-version: 17
           distribution: 'corretto'
-      - name: Sonarcube Analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew sonarqube
 #      - name: Sonarcube Analysis
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
