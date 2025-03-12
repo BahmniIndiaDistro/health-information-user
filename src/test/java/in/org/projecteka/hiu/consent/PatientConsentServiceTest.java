@@ -138,7 +138,7 @@ class PatientConsentServiceTest {
         var gatewayConsentArtefactResponse = gatewayConsentArtefactResponse()
                 .consent(consentArtefactResponse)
                 .error(null)
-                .resp(gatewayResponse)
+                .response(gatewayResponse)
                 .build();
         when(gatewayCache.get(requestId.toString())).thenReturn(just(consentRequestId));
         when(consentRepository.insertConsentArtefact(consentDetail, GRANTED, consentRequestId)).thenReturn(empty());
@@ -160,7 +160,7 @@ class PatientConsentServiceTest {
         ConsentRequestData consentRequestData = consentRequestDetails().build();
         consentRequestData.getConsent().getPatient().setId(requesterId);
         when(conceptValidator.validatePurpose(anyString())).thenReturn(just(true));
-        when(gatewayServiceClient.sendConsentRequest(anyString(), any())).thenReturn(empty());
+        when(gatewayServiceClient.sendConsentRequest(anyString(), any(), any())).thenReturn(empty());
         when(consentRepository.insertConsentRequestToGateway(any())).thenReturn(empty());
         when(patientConsentRepository.getLatestDataRequestsForPatient(eq(requesterId), any())).thenReturn(Mono.just(new ArrayList<>()));
         when(patientConsentRepository.insertPatientConsentRequest(any(), eq(hipId), eq(requesterId))).thenReturn(Mono.empty());
@@ -194,7 +194,7 @@ class PatientConsentServiceTest {
         when(patientConsentRepository.getLatestDataRequestsForPatient(eq(requesterId), any())).thenReturn(Mono.just(List.of(dataRequestDetail)));
 
         when(conceptValidator.validatePurpose(anyString())).thenReturn(just(true));
-        when(gatewayServiceClient.sendConsentRequest(anyString(), any())).thenReturn(empty());
+        when(gatewayServiceClient.sendConsentRequest(anyString(), any(), any())).thenReturn(empty());
         when(consentRepository.insertConsentRequestToGateway(any())).thenReturn(empty());
         when(patientConsentRepository.insertPatientConsentRequest(any(UUID.class), eq(hipId), eq(requesterId))).thenReturn(Mono.empty());
         when(patientRequestCache.put(anyString(), anyString())).thenReturn(Mono.empty());
@@ -206,7 +206,7 @@ class PatientConsentServiceTest {
         StepVerifier.create(request).expectNextCount(1).verifyComplete();
 
         ArgumentCaptor<ConsentRequest> capture = ArgumentCaptor.forClass(ConsentRequest.class);
-        verify(gatewayServiceClient, times(1)).sendConsentRequest(eq("ncg"), capture.capture());
+        verify(gatewayServiceClient, times(1)).sendConsentRequest(eq("ncg"), capture.capture(), any());
         assertEquals(hipId, capture.getValue().getConsent().getHip().getId());
         assertEquals(requesterId, capture.getValue().getConsent().getPatient().getId());
         verify(patientHIUCertService, times(1)).signConsentRequest(any(Consent.class));
@@ -239,7 +239,7 @@ class PatientConsentServiceTest {
                 .verifyComplete();
 
         ArgumentCaptor<ConsentRequest> capture = ArgumentCaptor.forClass(ConsentRequest.class);
-        verify(gatewayServiceClient, times(0)).sendConsentRequest(eq("ncg"), capture.capture());
+        verify(gatewayServiceClient, times(0)).sendConsentRequest(eq("ncg"), capture.capture(), any());
     }
 
 }

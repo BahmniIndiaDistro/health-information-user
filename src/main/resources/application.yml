@@ -5,14 +5,12 @@ hiu:
   id: ${HIU_ID}
   name: ${HIU_NAME}
   dataPushUrl: ${DATA_PUSH_URL}
-  consentNotificationUrl: ${CONSENT_NOTIFICATION_URL}
   valueSets: ${VALUESET_JSON:classpath:/static/ValueSet/ncg-valuesets.json}
   secret: ${HIU_SECRET:RiPzliMKlBf67mgLpvn6LBg2Fz5OqBBmJNzi4nQ9YMZy0pq2uu}
   disableHttpOptionsMethod: ${DISABLE_HTTP_OPTIONS:false}
   hfrAffinityDomains: ${HFR_AFFINITY_DOMAINS}
   consentmanager:
     suffix: ${CONSENT_MANAGEMENT_SUFFIX}
-    url: ${CONSENT_MANAGEMENT_URL}
   dataflowservice:
     defaultPageSize: ${DEFAULT_PAGE_SIZE}
     maxPageSize: ${MAX_PAGE_SIZE}
@@ -50,6 +48,7 @@ hiu:
     clientSecret: ${HIU_CLIENT_SECRET}
     jwkUrl: ${GATEWAY_JWK_URL}
     access-token-expiry-in-minutes: ${TOKEN_EXPIRY:10}
+    abhaAddressBaseUrl: ${ABHA_ADDRESS_BASE_URL}
   consentservice:
     consentRequestFromYears: ${CONSENT_REQUEST_FROM_YEARS:7}
     consentExpiryInMonths: ${CONSETN_EXPIRY_IN_MONTHS:2}

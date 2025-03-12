@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import in.org.projecteka.hiu.GatewayProperties;
+import in.org.projecteka.hiu.HiuProperties;
+import in.org.projecteka.hiu.common.Constants;
 import in.org.projecteka.hiu.dataflow.model.DateRange;
 import in.org.projecteka.hiu.dataflow.model.GatewayDataFlowRequest;
 import okhttp3.mockwebserver.MockResponse;
@@ -20,8 +22,6 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,6 +37,9 @@ public class DataFlowClientTest {
 
     @Mock
     GatewayProperties gatewayProperties;
+
+    @Mock
+    HiuProperties hiuProperties;
 
     @BeforeEach
     public void init() {
@@ -55,7 +58,7 @@ public class DataFlowClientTest {
 
                 }).build();
         WebClient.Builder webClientBuilder = WebClient.builder().exchangeStrategies(strategies);
-        dataFlowClient = new DataFlowClient(webClientBuilder, gatewayProperties);
+        dataFlowClient = new DataFlowClient(webClientBuilder, gatewayProperties, hiuProperties);
     }
 
     @Test
@@ -65,18 +68,17 @@ public class DataFlowClientTest {
                         .from(toDate("2020-01-14T08:47:48"))
                         .to(toDate("2020-01-20T08:47:48")).build())
                 .build();
-        var gatewayDataFlowRequest = new GatewayDataFlowRequest(UUID.randomUUID(),
-                LocalDateTime.now(ZoneOffset.UTC),
+        var gatewayDataFlowRequest = new GatewayDataFlowRequest(
                 dataFlowRequest);
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(202));
         when(gatewayProperties.getBaseUrl()).thenReturn(mockWebServer.url("").toString());
 
-        StepVerifier.create(dataFlowClient.initiateDataFlowRequest(gatewayDataFlowRequest, string(), string()))
+        StepVerifier.create(dataFlowClient.initiateDataFlowRequest(gatewayDataFlowRequest, string(), string(),UUID.randomUUID().toString()))
                 .verifyComplete();
 
         RecordedRequest recordedRequest = mockWebServer.takeRequest();
         assertThat(Objects.requireNonNull(recordedRequest.getRequestUrl()).toString())
-                .isEqualTo(mockWebServer.url("") + "health-information/cm/request");
+                .isEqualTo(mockWebServer.url(Constants.GATEWAY_PATH_HEALTH_INFORMATION_REQUEST).toString());
     }
 }

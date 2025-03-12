@@ -19,11 +19,9 @@ service:
   port: 9053
 
 config:
-  IDENTITY_JWK_URL: "https://dev.ndhm.gov.in/auth/realms/consent-manager/protocol/openid-connect/certs"
+  IDENTITY_JWK_URL: "https://dev.abdm.gov.in/api/hiecm/gateway/v3/certs"
   DATA_PUSH_URL: ""
-  CONSENT_NOTIFICATION_URL: "http://localhost:8003/consent/notification"
   CONSENT_MANAGEMENT_SUFFIX: "@sbx"
-  CONSENT_MANAGEMENT_URL: "https://dev.ndhm.gov.in/cm"
   DEFAULT_PAGE_SIZE: 20
   MAX_PAGE_SIZE: 100
   LOCAL_STORAGE_PATH: "/tmp/"
@@ -33,7 +31,7 @@ config:
   DB_CONNECTION_POOL_SIZE: 5
   OFFSET_IN_DAYS: 2
   USING_GATEWAY: true
-  GATEWAY_BASE_URL: "https://dev.abdm.gov.in/gateway/v0.5"
+  GATEWAY_BASE_URL: "https://dev.abdm.gov.in"
   GATEWAY_REQUEST_TIMEOUT: 3000
   GATEWAY_JWK_URL: "https://dev.abdm.gov.in/gateway/v0.5/certs"
   HFR_AFFINITY_DOMAINS: "facilitysbx.ndhm.gov.in"
@@ -47,6 +45,7 @@ config:
   POSTGRES_PASSWORD: "welcome"
   RABBITMQ_USERNAME: "bahmni"
   RABBITMQ_PASSWORD: "bahmni"
+  ABHA_ADDRESS_BASE_URL: "https://abhasbx.abdm.gov.in/abha/api/v3/phr/web"
 
 secrets:
   HIU_CLIENT_ID: ""

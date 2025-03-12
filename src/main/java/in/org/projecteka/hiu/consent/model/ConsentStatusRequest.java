@@ -6,16 +6,12 @@ import lombok.Builder;
 import lombok.Value;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Value
 @Builder
 public class ConsentStatusRequest {
-    UUID requestId;
-    LocalDateTime timestamp;
     ConsentStatusDetail consentRequest;
     RespError error;
     @NotNull
-    GatewayResponse resp;
+    GatewayResponse response;
 }

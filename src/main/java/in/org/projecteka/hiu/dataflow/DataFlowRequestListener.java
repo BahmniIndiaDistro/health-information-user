@@ -81,13 +81,13 @@ public class DataFlowRequestListener {
                 gateway.token()
                         .flatMap(token -> {
                             var gatewayDataFlowRequest = getDataFlowRequest(dataFlowRequest);
-                            String requestId = gatewayDataFlowRequest.getRequestId().toString();
+                            String requestId = UUID.randomUUID().toString();
                             logger.info("[DataFlowRequestListener] Initiating data flow request to consent manager with RequestID" +
                                     " {}", requestId);
                             return consentRepository.getPatientId(consentId)
                                     .flatMap(patientId -> dataFlowClient.initiateDataFlowRequest(gatewayDataFlowRequest,
                                             token,
-                                            getCmSuffix(patientId)))
+                                            getCmSuffix(patientId), requestId))
                                     .then(defer(() -> dataFlowRepository.addDataFlowRequest(requestId,
                                             consentId,
                                             dataFlowRequest)))
@@ -112,9 +112,7 @@ public class DataFlowRequestListener {
 
 
     private GatewayDataFlowRequest getDataFlowRequest(DataFlowRequest dataFlowRequest) {
-        var requestId = UUID.randomUUID();
-        var timestamp = LocalDateTime.now(ZoneOffset.UTC);
-        return new GatewayDataFlowRequest(requestId, timestamp, dataFlowRequest);
+        return new GatewayDataFlowRequest(dataFlowRequest);
     }
 
     private String getCmSuffix(String patientId) {

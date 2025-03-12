@@ -16,6 +16,6 @@ import java.io.Serializable;
 @Data
 @ToString
 public class RespError implements Serializable {
-    private Integer code;
+    private String code;
     private String message;
 }

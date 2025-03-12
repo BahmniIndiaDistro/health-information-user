@@ -15,6 +15,7 @@ import in.org.projecteka.hiu.consent.model.ConsentStatusRequest;
 import in.org.projecteka.hiu.consent.model.GatewayConsentArtefactResponse;
 import in.org.projecteka.hiu.consent.model.HiuConsentNotificationRequest;
 import in.org.projecteka.hiu.consent.model.consentmanager.ConsentRequest;
+import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
 import in.org.projecteka.hiu.patient.PatientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,30 +102,29 @@ public class ConsentService {
                 .then();
     }
 
-    public Mono<Void> createRequest(String requesterId, ConsentRequestData consentRequestData) {
+    public Mono<Void> createRequest(Requester requester, ConsentRequestData consentRequestData) {
         var gatewayRequestId = UUID.randomUUID();
         return validateConsentRequest(consentRequestData)
-                .then(sendConsentRequestToGateway(requesterId, consentRequestData, gatewayRequestId));
+                .then(sendConsentRequestToGateway(requester, consentRequestData, gatewayRequestId));
     }
 
     private Mono<Void> sendConsentRequestToGateway(
-            String requesterId,
+            Requester requester,
             ConsentRequestData hiRequest,
             UUID gatewayRequestId) {
-        var reqInfo = hiRequest.getConsent().to(requesterId, hiuProperties.getId(), conceptValidator);
+
+        var reqInfo = hiRequest.getConsent().to(requester, hiuProperties.getId(), conceptValidator);
         var patientId = hiRequest.getConsent().getPatient().getId();
         var consentRequest = ConsentRequest.builder()
-                .requestId(gatewayRequestId)
-                .timestamp(now(UTC))
                 .consent(reqInfo)
                 .build();
-        var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requesterId);
+        var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requester.getName());
         return consentRepository.insertConsentRequestToGateway(hiuConsentRequest)
-                .then(gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest));
+                .then(gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest, gatewayRequestId.toString()));
     }
 
     public Mono<Void> updatePostedRequest(ConsentRequestInitResponse response) {
-        var requestId = response.getResp().getRequestId();
+        var requestId = response.getResponse().getRequestId();
         if (response.getError() != null) {
             logger.error("[ConsentService] Received error response from consent-request. HIU " +
                             "RequestId={}, Error code = {}, message={}",
@@ -158,7 +158,7 @@ public class ConsentService {
                                                   ConsentStatus oldStatus) {
         if (oldStatus.equals(ConsentStatus.POSTED)) {
             return consentRepository.updateConsentRequestStatus(
-                    consentRequestInitResponse.getResp().getRequestId(),
+                    consentRequestInitResponse.getResponse().getRequestId(),
                     ConsentStatus.REQUESTED,
                     consentRequestInitResponse.getConsentRequest().getId());
         }
@@ -209,21 +209,21 @@ public class ConsentService {
                 .map(artefactStatus -> consent.toBuilder().status(artefactStatus).build());
     }
 
-    public Mono<Void> handleNotification(HiuConsentNotificationRequest hiuNotification) {
-        return processConsentNotification(hiuNotification.getNotification(), hiuNotification.getTimestamp(), hiuNotification.getRequestId());
+    public Mono<Void> handleNotification(HiuConsentNotificationRequest hiuNotification, UUID requestId, LocalDateTime timestamp) {
+        return processConsentNotification(hiuNotification.getNotification(), timestamp ,requestId);
     }
 
     public Mono<Void> handleConsentArtefact(GatewayConsentArtefactResponse consentArtefactResponse) {
         if (consentArtefactResponse.getError() != null) {
             logger.error("[ConsentService] Received error response for consent-artefact. HIU " +
                             "RequestId={}, Error code = {}, message={}",
-                    consentArtefactResponse.getResp().getRequestId(),
+                    consentArtefactResponse.getResponse().getRequestId(),
                     consentArtefactResponse.getError().getCode(),
                     consentArtefactResponse.getError().getMessage());
             return empty();
         }
         if (consentArtefactResponse.getConsent() != null) {
-            return responseCache.get(consentArtefactResponse.getResp().getRequestId())
+            return responseCache.get(consentArtefactResponse.getResponse().getRequestId())
                     .flatMap(requestId -> consentRepository.insertConsentArtefact(
                             consentArtefactResponse.getConsent().getConsentDetail(),
                             consentArtefactResponse.getConsent().getStatus(),
@@ -242,7 +242,7 @@ public class ConsentService {
         if (consentStatusRequest.getError() != null) {
             logger.error("[ConsentService] Received error response for consent-status. HIU " +
                             "RequestId={}, Error code = {}, message={}",
-                    consentStatusRequest.getResp().getRequestId(),
+                    consentStatusRequest.getResponse().getRequestId(),
                     consentStatusRequest.getError().getCode(),
                     consentStatusRequest.getError().getMessage());
             return empty();

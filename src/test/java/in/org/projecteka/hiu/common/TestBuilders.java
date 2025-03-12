@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import in.org.projecteka.hiu.consent.model.DateRange;
 import in.org.projecteka.hiu.patient.PatientRepresentation;
-import in.org.projecteka.hiu.patient.model.PatientSearchGatewayResponse;
+import in.org.projecteka.hiu.patient.model.AbhaAddressSearchResponse;
 import org.jeasy.random.EasyRandom;
 
 public class TestBuilders {
@@ -27,8 +27,8 @@ public class TestBuilders {
         return easyRandom.nextObject(GatewayResponse.GatewayResponseBuilder.class);
     }
 
-    public static PatientSearchGatewayResponse.PatientSearchGatewayResponseBuilder patientSearchGatewayResponse() {
-        return easyRandom.nextObject(PatientSearchGatewayResponse.PatientSearchGatewayResponseBuilder.class);
+    public static AbhaAddressSearchResponse.AbhaAddressSearchResponseBuilder abhaAddressSearchResponse() {
+        return easyRandom.nextObject(AbhaAddressSearchResponse.AbhaAddressSearchResponseBuilder.class);
     }
 
     public static PatientRepresentation.PatientRepresentationBuilder patientRepresentation() {

@@ -1,5 +1,6 @@
 package in.org.projecteka.hiu.consent.model.consentmanager;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import in.org.projecteka.hiu.consent.model.DateRange;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static in.org.projecteka.hiu.common.Constants.TIMESTAMP_PATTERN;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Builder
@@ -17,6 +20,7 @@ import java.time.LocalDateTime;
 public class Permission {
     private AccessMode accessMode;
     private DateRange dateRange;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TIMESTAMP_PATTERN)
     private LocalDateTime dataEraseAt;
     private Frequency frequency;
 }

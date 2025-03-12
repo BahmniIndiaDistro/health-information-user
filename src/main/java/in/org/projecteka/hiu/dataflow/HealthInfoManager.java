@@ -1,5 +1,6 @@
 package in.org.projecteka.hiu.dataflow;
 
+import in.org.projecteka.hiu.common.Utils;
 import in.org.projecteka.hiu.consent.ConsentRepository;
 import in.org.projecteka.hiu.consent.PatientConsentRepository;
 import in.org.projecteka.hiu.consent.model.ConsentStatus;
@@ -234,7 +235,7 @@ public class HealthInfoManager {
     }
 
     private boolean isConsentNotExpired(Map<String, String> consentDetail) {
-        var consentExpiryDate = LocalDateTime.parse(consentDetail.get("consentExpiryDate"));
+        var consentExpiryDate = Utils.parseTimeStamp(consentDetail.get("consentExpiryDate"));
         return consentExpiryDate.isAfter(now(UTC));
     }
 

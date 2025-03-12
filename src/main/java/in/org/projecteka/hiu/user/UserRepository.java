@@ -8,11 +8,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 import static in.org.projecteka.hiu.ClientError.dbOperationFailure;
 
 @AllArgsConstructor
 public class UserRepository {
-    private static final String SELECT_USER_BY_USERNAME = "SELECT username, password, role, verified FROM " +
+    private static final String SELECT_USER_BY_USERNAME = "SELECT username, password, role, verified, hpin FROM " +
             "\"user\" WHERE username = $1";
     private static final String INSERT_USER = "Insert into \"user\" values ($1, $2, $3, $4)";
     private static final String UPDATE_PASSWORD = "UPDATE \"user\" SET password=$2, verified=true WHERE username=$1";
@@ -39,6 +41,13 @@ public class UserRepository {
                                     }
                                     monoSink.success(tryFrom(iterator.next()));
                                 }));
+    }
+
+    public Mono<String> getHpinForUser(String username){
+        return with(username)
+                .map(User::getHpin)
+                .filter(Objects::nonNull)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("HPIN Not found for " + username)));
     }
 
     public Mono<Void> save(User user) {
@@ -78,7 +87,8 @@ public class UserRepository {
                     row.getString("role") == null
                     ? Role.DOCTOR
                     : Role.valueOf(row.getString("role").toUpperCase()),
-                    row.getBoolean("verified"));
+                    row.getBoolean("verified"),
+                    row.getString("hpin") != null ? row.getString("hpin") : "");
         } catch (Exception e) {
             logger.error(e);
             return null;

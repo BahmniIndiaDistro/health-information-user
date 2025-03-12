@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static in.org.projecteka.hiu.ClientError.unauthorizedRequester;
+import static in.org.projecteka.hiu.ClientError.deprecatedApi;
 import static in.org.projecteka.hiu.common.Constants.API_PATH_FETCH_PATIENT_HEALTH_INFO;
 import static in.org.projecteka.hiu.common.Constants.API_PATH_GET_HEALTH_INFO_STATUS;
 import static in.org.projecteka.hiu.common.Constants.APP_PATH_PATIENT_CONSENT_REQUEST;
@@ -36,15 +37,12 @@ import static in.org.projecteka.hiu.common.Constants.GET_CERT;
 import static in.org.projecteka.hiu.common.Constants.INTERNAL_PATH_PATIENT_CARE_CONTEXT_INFO;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENTS_HIU_NOTIFY;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENTS_ON_FETCH;
-import static in.org.projecteka.hiu.common.Constants.PATH_CONSENTS_ON_FIND;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENT_REQUESTS_ON_INIT;
 import static in.org.projecteka.hiu.common.Constants.PATH_CONSENT_REQUEST_ON_STATUS;
 import static in.org.projecteka.hiu.common.Constants.PATH_DATA_TRANSFER;
 import static in.org.projecteka.hiu.common.Constants.PATH_HEALTH_INFORMATION_HIU_ON_REQUEST;
 import static in.org.projecteka.hiu.common.Constants.PATH_HEARTBEAT;
 import static in.org.projecteka.hiu.common.Constants.PATH_READINESS;
-import static in.org.projecteka.hiu.common.Constants.PATH_ON_AUTH_CONFIRM;
-import static in.org.projecteka.hiu.common.Constants.PATH_ON_AUTH_INIT;
 import static in.org.projecteka.hiu.user.Role.GATEWAY;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.of;
@@ -62,16 +60,17 @@ public class SecurityConfiguration {
             PATH_CONSENT_REQUESTS_ON_INIT,
             PATH_CONSENTS_HIU_NOTIFY,
             PATH_CONSENTS_ON_FETCH,
-            PATH_CONSENTS_ON_FIND,
             PATH_HEALTH_INFORMATION_HIU_ON_REQUEST,
             PATH_CONSENT_REQUEST_ON_STATUS
     };
 
+    // Deprecated: These APIs are no longer supported and will return a 410 Gone status
     private static final List<Map.Entry<HttpMethod, String>> CM_PATIENT_APIS = List.of(
             Map.entry(HttpMethod.POST, APP_PATH_PATIENT_CONSENT_REQUEST),
             Map.entry(HttpMethod.GET, "/v1/patient/health-information/fetch/*/attachments/*"),
             Map.entry(HttpMethod.POST, API_PATH_FETCH_PATIENT_HEALTH_INFO),
             Map.entry(HttpMethod.POST, API_PATH_GET_HEALTH_INFO_STATUS));
+
     private static final String[] ALLOWED_LISTS = new String[]{"/**.json",
 
             "/ValueSet",
@@ -84,8 +83,6 @@ public class SecurityConfiguration {
             PATH_HEARTBEAT,
             PATH_READINESS,
             INTERNAL_PATH_PATIENT_CARE_CONTEXT_INFO,
-            PATH_ON_AUTH_INIT,
-            PATH_ON_AUTH_CONFIRM,
             GET_CERT,
             "/sessions",
             "/config"};
@@ -147,10 +144,7 @@ public class SecurityConfiguration {
             }
 
             if (isCMPatientRequest(path, exchange.getRequest().getMethod())) {
-                var patientToken = exchange.getRequest().getHeaders().getFirst(authHeader);
-                return isEmpty(patientToken)
-                        ? error(unauthorizedRequester())
-                        : checkUserToken(patientToken).switchIfEmpty(error(unauthorizedRequester()));
+                return error(deprecatedApi());
             }
 
             var token = exchange.getRequest().getHeaders().getFirst(AUTHORIZATION);

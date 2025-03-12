@@ -17,19 +17,8 @@ import in.org.projecteka.hiu.auth.ExternalIDPOfflineAuthenticator;
 import in.org.projecteka.hiu.auth.IDPProperties;
 import in.org.projecteka.hiu.auth.ExternalIdentityProvider;
 import in.org.projecteka.hiu.auth.IdentityProvider;
-import in.org.projecteka.hiu.clients.GatewayAuthenticationClient;
-import in.org.projecteka.hiu.clients.GatewayServiceClient;
-import in.org.projecteka.hiu.clients.HealthInformationClient;
-import in.org.projecteka.hiu.clients.Patient;
-import in.org.projecteka.hiu.common.Authenticator;
-import in.org.projecteka.hiu.common.CMPatientAuthenticator;
-import in.org.projecteka.hiu.common.CacheMethodProperty;
-import in.org.projecteka.hiu.common.Gateway;
-import in.org.projecteka.hiu.common.GatewayTokenVerifier;
-import in.org.projecteka.hiu.common.KeyPairConfig;
-import in.org.projecteka.hiu.common.RabbitQueueNames;
-import in.org.projecteka.hiu.common.RedisOptions;
-import in.org.projecteka.hiu.common.UserAuthenticator;
+import in.org.projecteka.hiu.clients.*;
+import in.org.projecteka.hiu.common.*;
 import in.org.projecteka.hiu.common.cache.CacheAdapter;
 import in.org.projecteka.hiu.common.cache.LoadingCacheGenericAdapter;
 import in.org.projecteka.hiu.common.cache.RedisGenericAdapter;
@@ -62,10 +51,10 @@ import in.org.projecteka.hiu.dataflow.model.PatientHealthInfoStatus;
 import in.org.projecteka.hiu.dataprocessor.DataAvailabilityListener;
 import in.org.projecteka.hiu.dataprocessor.HealthDataRepository;
 import in.org.projecteka.hiu.patient.PatientService;
-import in.org.projecteka.hiu.patient.model.PatientSearchGatewayResponse;
 import in.org.projecteka.hiu.user.JWTGenerator;
 import in.org.projecteka.hiu.user.SessionService;
 import in.org.projecteka.hiu.user.UserRepository;
+import in.org.projecteka.hiu.user.UserService;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import io.netty.handler.ssl.SslContext;
@@ -139,13 +128,14 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
-import static in.org.projecteka.hiu.common.Constants.EMPTY_STRING;
+import static in.org.projecteka.hiu.common.Constants.*;
 import static io.lettuce.core.ReadFrom.MASTER_PREFERRED;
-import static java.time.Duration.ofDays;
-import static java.time.Duration.ofMinutes;
+import static java.time.Duration.*;
 
 @Configuration
 public class HiuConfiguration {
@@ -327,14 +317,14 @@ public class HiuConfiguration {
                                          CacheAdapter<String, Patient> cache,
                                          HiuProperties hiuProperties,
                                          GatewayProperties gatewayProperties,
-                                         CacheAdapter<String, PatientSearchGatewayResponse> patientSearchCache,
-                                         PatientConsentService patientConsentService) {
+                                         PatientConsentService patientConsentService,
+                                         AbhaAddressServiceClient abhaAddressServiceClient) {
         return new PatientService(
                 gatewayServiceClient,
                 cache,
                 hiuProperties,
                 gatewayProperties,
-                patientSearchCache, patientConsentService);
+                patientConsentService, abhaAddressServiceClient);
     }
 
     @Bean
@@ -468,47 +458,6 @@ public class HiuConfiguration {
         return new ReactiveRedisTemplate<>(factory, builder.value(valueSerializer).build());
     }
 
-    @Bean
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "guava", matchIfMissing = true)
-    public CacheAdapter<String, PatientSearchGatewayResponse> patientSearchCacheAdapter(
-            LoadingCache<String, PatientSearchGatewayResponse> patientSearchCache) {
-        return new LoadingCacheGenericAdapter<>(patientSearchCache, PatientSearchGatewayResponse.empty());
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "guava", matchIfMissing = true)
-    public LoadingCache<String, PatientSearchGatewayResponse> patientSearchCache() {
-        return CacheBuilder
-                .newBuilder()
-                .maximumSize(50)
-                .expireAfterWrite(1, TimeUnit.HOURS)
-                .build(new CacheLoader<>() {
-                    public PatientSearchGatewayResponse load(String anyKey) {
-                        return PatientSearchGatewayResponse.empty();
-                    }
-                });
-    }
-
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "redis")
-    @Bean
-    public CacheAdapter<String, PatientSearchGatewayResponse> redisPatientSearchResponse(
-            ReactiveRedisOperations<String, PatientSearchGatewayResponse> stringReactiveRedisOperations,
-            RedisOptions redisOptions) {
-        return new RedisGenericAdapter<>(stringReactiveRedisOperations,
-                ofMinutes(30),
-                "hiu-patient-gateway-response",
-                redisOptions.getRetry());
-    }
-
-    @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "redis")
-    @Bean
-    ReactiveRedisOperations<String, PatientSearchGatewayResponse> patientResponseReactiveOperations(
-            ReactiveRedisConnectionFactory factory) {
-        var valueSerializer = new Jackson2JsonRedisSerializer<>(PatientSearchGatewayResponse.class);
-        RedisSerializationContextBuilder<String, PatientSearchGatewayResponse> builder =
-                RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
-        return new ReactiveRedisTemplate<>(factory, builder.value(valueSerializer).build());
-    }
 
     @Bean
     public ConsentRepository consentRepository(@Qualifier("readWriteClient") PgPool readWriteClient,
@@ -603,8 +552,9 @@ public class HiuConfiguration {
 
     @Bean
     public DataFlowClient dataFlowClient(@Qualifier("customBuilder") WebClient.Builder builder,
-                                         GatewayProperties gatewayProperties) {
-        return new DataFlowClient(builder, gatewayProperties);
+                                         GatewayProperties gatewayProperties,
+                                         HiuProperties hiuProperties) {
+        return new DataFlowClient(builder, gatewayProperties, hiuProperties);
     }
 
     @Bean
@@ -740,8 +690,8 @@ public class HiuConfiguration {
     @Bean
     public GatewayAuthenticationClient centralRegistryClient(
             @Qualifier("customBuilder") WebClient.Builder builder,
-            GatewayProperties gatewayProperties) {
-        return new GatewayAuthenticationClient(builder, gatewayProperties.getBaseUrl());
+            GatewayProperties gatewayProperties, ConsentManagerServiceProperties consentManagerServiceProperties) {
+        return new GatewayAuthenticationClient(builder, gatewayProperties.getBaseUrl(), consentManagerServiceProperties);
     }
 
     @Bean
@@ -780,10 +730,30 @@ public class HiuConfiguration {
 
     @ConditionalOnProperty(value = "hiu.authorization.useCMAsIDP", havingValue = "true", matchIfMissing = true)
     @Bean("userAuthenticator")
-    public Authenticator userAuthenticator(IdentityServiceProperties identityServiceProperties,
-                                           ConfigurableJWTProcessor<SecurityContext> jwtProcessor) throws IOException, ParseException {
-        var jwkSet = JWKSet.load(new URL(identityServiceProperties.getJwkUrl()));
-        return new CMPatientAuthenticator(jwkSet, jwtProcessor);
+    public Authenticator userAuthenticator(IdentityServiceProperties identityServiceProperties, GatewayProperties gatewayProperties, ConsentManagerServiceProperties consentManagerServiceProperties,
+                                           ConfigurableJWTProcessor<SecurityContext> jwtProcessor) throws ParseException {
+        try {
+            WebClient webClient = WebClient.builder().baseUrl(identityServiceProperties.getJwkUrl()).build();
+
+            String jwksString = webClient.get()
+                    .header(REQUEST_ID, UUID.randomUUID().toString())
+                    .header(TIMESTAMP, Utils.getISOTimestamp())
+                    .header(X_CM_ID, getCmSuffix(consentManagerServiceProperties.getSuffix()))
+                    .retrieve()
+                    .onStatus(Predicate.not(HttpStatus::is2xxSuccessful), clientResponse ->
+                            clientResponse.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new RuntimeException("Error fetching JWKS: " + errorBody))))
+                    .bodyToMono(String.class)
+                    .timeout(ofMillis(gatewayProperties.getRequestTimeout() + 8000))
+                    .block();
+
+            JWKSet jwkSet = JWKSet.parse(jwksString);
+            return new CMPatientAuthenticator(jwkSet, jwtProcessor);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
     @Bean
@@ -841,6 +811,11 @@ public class HiuConfiguration {
     }
 
     @Bean
+    public UserService userService(UserRepository userRepository){
+        return new UserService(userRepository);
+    }
+
+    @Bean
     byte[] sharedSecret(@Value("${hiu.secret}") String secret) {
         return secret.getBytes();
     }
@@ -853,8 +828,16 @@ public class HiuConfiguration {
     @Bean
     public GatewayServiceClient gatewayServiceClient(@Qualifier("customBuilder") WebClient.Builder builder,
                                                      GatewayProperties serviceProperties,
-                                                     Gateway gateway) {
-        return new GatewayServiceClient(builder, serviceProperties, gateway);
+                                                     Gateway gateway,
+                                                     HiuProperties hiuProperties) {
+        return new GatewayServiceClient(builder, serviceProperties, gateway, hiuProperties);
+    }
+
+    @Bean
+    public AbhaAddressServiceClient abhaAddressServiceClient(@Qualifier("customBuilder") WebClient.Builder builder,
+                                                         GatewayProperties serviceProperties,
+                                                         Gateway gateway) {
+        return new AbhaAddressServiceClient(builder, serviceProperties, gateway);
     }
 
     @ConditionalOnProperty(value = "hiu.cache-method", havingValue = "guava", matchIfMissing = true)

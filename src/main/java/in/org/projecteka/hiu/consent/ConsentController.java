@@ -2,21 +2,21 @@ package in.org.projecteka.hiu.consent;
 
 import in.org.projecteka.hiu.Caller;
 import in.org.projecteka.hiu.common.Constants;
+import in.org.projecteka.hiu.common.Utils;
+import in.org.projecteka.hiu.common.exception.HpinNotFoundException;
 import in.org.projecteka.hiu.consent.model.ConsentRequestData;
 import in.org.projecteka.hiu.consent.model.ConsentRequestInitResponse;
 import in.org.projecteka.hiu.consent.model.ConsentRequestRepresentation;
 import in.org.projecteka.hiu.consent.model.ConsentStatusRequest;
 import in.org.projecteka.hiu.consent.model.GatewayConsentArtefactResponse;
 import in.org.projecteka.hiu.consent.model.HiuConsentNotificationRequest;
+import in.org.projecteka.hiu.user.UserService;
 import lombok.AllArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,21 +25,26 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-import static in.org.projecteka.hiu.common.Constants.APP_PATH_HIU_CONSENT_REQUESTS;
-import static in.org.projecteka.hiu.common.Constants.CORRELATION_ID;
+import static in.org.projecteka.hiu.common.Constants.*;
 
 @RestController
 @AllArgsConstructor
 public class ConsentController {
     private final ConsentService consentService;
 
+    private final UserService userService;
+
     @PostMapping(APP_PATH_HIU_CONSENT_REQUESTS)
-    public Mono<ResponseEntity<HttpStatus>> postConsentRequest(@RequestBody ConsentRequestData consentRequestData) {
+    public Mono<ResponseEntity<Object>> postConsentRequest(@RequestBody ConsentRequestData consentRequestData) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(securityContext -> (Caller) securityContext.getAuthentication().getPrincipal())
                 .map(Caller::getUsername)
-                .flatMap(requesterId -> consentService.createRequest(requesterId, consentRequestData))
-                .thenReturn(new ResponseEntity<>(HttpStatus.ACCEPTED));
+                .flatMap(userService::toRequester)
+                .flatMap(requester -> consentService.createRequest(requester, consentRequestData))
+                .thenReturn(new ResponseEntity<>(HttpStatus.ACCEPTED))
+                .onErrorResume(HpinNotFoundException.class, e ->
+                        Mono.just(ResponseEntity.badRequest().body(e.getMessage()))
+                );
     }
 
     @PostMapping(Constants.PATH_CONSENT_REQUESTS_ON_INIT)
@@ -59,8 +64,10 @@ public class ConsentController {
 
     @PostMapping(Constants.PATH_CONSENTS_HIU_NOTIFY)
     public Mono<ResponseEntity<HttpStatus>> hiuConsentNotification(
-            @RequestBody @Valid HiuConsentNotificationRequest hiuNotification) {
-        consentService.handleNotification(hiuNotification)
+            @RequestBody @Valid HiuConsentNotificationRequest hiuNotification,
+            @RequestHeader(REQUEST_ID) UUID requestId,
+            @RequestHeader(TIMESTAMP) String timestamp ) {
+        consentService.handleNotification(hiuNotification, requestId, Utils.parseTimeStamp(timestamp))
                 .subscriberContext(ctx -> {
                     Optional<String> correlationId = Optional.ofNullable(MDC.get(CORRELATION_ID));
                     return correlationId.map(id -> ctx.put(CORRELATION_ID, id))

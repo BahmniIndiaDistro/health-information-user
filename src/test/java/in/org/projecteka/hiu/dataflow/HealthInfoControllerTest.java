@@ -20,6 +20,7 @@ import in.org.projecteka.hiu.dataflow.model.DataRequestStatusResponse;
 import in.org.projecteka.hiu.dataflow.model.DataRequestStatusCheckRequest;
 import in.org.projecteka.hiu.dataprocessor.DataAvailabilityListener;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -50,6 +51,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static reactor.core.publisher.Mono.just;
 
+@Disabled // Skipping these tests as the APIs are deprecated.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient

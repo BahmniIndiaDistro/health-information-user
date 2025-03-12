@@ -3,9 +3,11 @@ package in.org.projecteka.hiu.consent;
 import in.org.projecteka.hiu.HiuProperties;
 import in.org.projecteka.hiu.clients.GatewayServiceClient;
 import in.org.projecteka.hiu.clients.Patient;
+import in.org.projecteka.hiu.common.Constants;
 import in.org.projecteka.hiu.common.cache.CacheAdapter;
 import in.org.projecteka.hiu.consent.model.ConsentRequestData;
-import in.org.projecteka.hiu.patient.model.PatientSearchGatewayResponse;
+import in.org.projecteka.hiu.consent.model.consentmanager.Identifier;
+import in.org.projecteka.hiu.consent.model.consentmanager.Requester;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -31,7 +33,6 @@ import static in.org.projecteka.hiu.consent.model.ConsentStatus.DENIED;
 import static in.org.projecteka.hiu.consent.model.ConsentStatus.GRANTED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -43,8 +44,6 @@ class ConsentServiceTest {
     CacheAdapter<String, Patient> cache;
     @Mock
     CacheAdapter<String, String> patientRequestCache;
-    @Mock
-    CacheAdapter<String, PatientSearchGatewayResponse> patientSearchCache;
     @Mock
     CacheAdapter<String, String> gatewayCache;
     @Mock
@@ -89,16 +88,22 @@ class ConsentServiceTest {
     @Test
     void shouldSaveAndPostConsentRequest() {
         String requesterId = randomString();
+        Requester requester = Requester.builder()
+                .name(requesterId)
+                .identifier(Identifier.builder()
+                        .type(Constants.REQUESTER_IDENTIFIER_TYPE)
+                        .system(Constants.REQUESTER_IDENTIFIER_SYSTEM).value("TEST123").build())
+                .build();
         var token = randomString();
         ConsentRequestData consentRequestData = consentRequestDetails().build();
         consentRequestData.getConsent().getPatient().setId("hinapatel79@ncg");
 
         when(conceptValidator.validatePurpose(anyString())).thenReturn(just(true));
-        when(gatewayServiceClient.sendConsentRequest(anyString(), any()))
+        when(gatewayServiceClient.sendConsentRequest(anyString(), any(),any()))
                 .thenReturn(empty());
         when(consentRepository.insertConsentRequestToGateway(any())).thenReturn(Mono.create(MonoSink::success));
 
-        Mono<Void> request = consentService.createRequest(requesterId, consentRequestData);
+        Mono<Void> request = consentService.createRequest(requester, consentRequestData);
 
         StepVerifier.create(request).expectComplete().verify();
     }
@@ -135,7 +140,7 @@ class ConsentServiceTest {
         var gatewayConsentArtefactResponse = gatewayConsentArtefactResponse()
                 .consent(consentArtefactResponse)
                 .error(null)
-                .resp(gatewayResponse)
+                .response(gatewayResponse)
                 .build();
         when(gatewayCache.get(requestId.toString())).thenReturn(just(consentRequestId));
         when(consentRepository.insertConsentArtefact(consentDetail, GRANTED, consentRequestId)).thenReturn(empty());

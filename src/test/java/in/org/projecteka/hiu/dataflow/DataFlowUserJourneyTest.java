@@ -171,7 +171,7 @@ class DataFlowUserJourneyTest {
         consentDetailsMap.put("hipName", hipName);
         consentDetailsMap.put("requester", "testUser");
         consentDetailsMap.put("status", "GRANTED");
-        consentDetailsMap.put("consentExpiryDate", "9999-01-15T08:47:48");
+        consentDetailsMap.put("consentExpiryDate", "9999-01-15T08:47:48.000Z");
         consentDetails.add(consentDetailsMap);
         var token = randomString();
         var caller = new Caller("testUser", false, Role.ADMIN.toString(), true);
@@ -227,7 +227,7 @@ class DataFlowUserJourneyTest {
         consentDetailsMap.put("hipName", hipName);
         consentDetailsMap.put("requester", "testUser");
         consentDetailsMap.put("status", "GRANTED");
-        consentDetailsMap.put("consentExpiryDate", "2019-01-15T08:47:48");
+        consentDetailsMap.put("consentExpiryDate", "2019-01-15T08:47:48.000Z");
         consentDetails.add(consentDetailsMap);
         var errorResponse = new ErrorRepresentation(new Error(
                 ErrorCode.CONSENT_ARTEFACT_NOT_FOUND,
@@ -316,7 +316,7 @@ class DataFlowUserJourneyTest {
         when(dataFlowRepository.updateDataRequest(
                 transactionId,
                 dataFlowRequestResult.getHiRequest().getSessionStatus(),
-                dataFlowRequestResult.getResp().getRequestId()
+                dataFlowRequestResult.getResponse().getRequestId()
         )).thenReturn(Mono.empty());
         when(dataFlowRepository.addKeys(eq(transactionId), any())).thenReturn(Mono.empty());
 

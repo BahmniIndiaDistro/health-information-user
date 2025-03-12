@@ -6,6 +6,7 @@ import in.org.projecteka.hiu.Error;
 import in.org.projecteka.hiu.ErrorRepresentation;
 import in.org.projecteka.hiu.HiuProperties;
 import in.org.projecteka.hiu.clients.GatewayServiceClient;
+import in.org.projecteka.hiu.common.Constants;
 import in.org.projecteka.hiu.common.cache.CacheAdapter;
 import in.org.projecteka.hiu.consent.model.Consent;
 import in.org.projecteka.hiu.consent.model.ConsentRequestData;
@@ -174,9 +175,10 @@ public class PatientConsentService {
         var gatewayRequestId = UUID.randomUUID();
         var hipIdForConsentRequest = consentRequestData.getConsent().getHipId();
         var patientId = consentRequestData.getConsent().getPatient().getId();
+        Requester requester = buildRequester(patientId);
         return validateConsentRequest(consentRequestData)
                 .then(Mono.defer(() -> patientRequestCache.put(gatewayRequestId.toString(), dataRequestId.toString())))
-                .then(sendConsentRequestToGateway(patientId, consentRequestData, gatewayRequestId))
+                .then(sendConsentRequestToGateway(requester, consentRequestData, gatewayRequestId))
                 .then(patientConsentRepository.insertPatientConsentRequest(dataRequestId, hipIdForConsentRequest, patientId))
                 .thenReturn(dataRequestId.toString());
     }
@@ -191,10 +193,10 @@ public class PatientConsentService {
     }
 
     private Mono<Void> sendConsentRequestToGateway(
-            String requesterId,
+            Requester requester,
             ConsentRequestData hiRequest,
             UUID gatewayRequestId) {
-        var reqInfo = hiRequest.getConsent().to(requesterId, hiuProperties.getId(), conceptValidator);
+        var reqInfo = hiRequest.getConsent().to(requester, hiuProperties.getId(), conceptValidator);
         var encodedSign = patientHIUCertService.signConsentRequest(reqInfo);
         var requesterIdentifier = Identifier.builder().value(encodedSign).build();
         reqInfo = reqInfo.toBuilder()
@@ -205,12 +207,10 @@ public class PatientConsentService {
                 .build();
         var patientId = hiRequest.getConsent().getPatient().getId();
         var consentRequest = ConsentRequest.builder()
-                .requestId(gatewayRequestId)
-                .timestamp(now(UTC))
                 .consent(reqInfo)
                 .build();
-        var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requesterId);
-        return gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest)
+        var hiuConsentRequest = hiRequest.getConsent().toConsentRequest(gatewayRequestId.toString(), requester.getName());
+        return gatewayServiceClient.sendConsentRequest(getCmSuffix(patientId), consentRequest, gatewayRequestId.toString())
                 .then(defer(() -> consentRepository.insertConsentRequestToGateway(hiuConsentRequest)));
     }
 
@@ -218,5 +218,13 @@ public class PatientConsentService {
                                                                              String username) {
         var dataRequestIds = dataRequestDetails.stream().map(PatientDataRequestDetail::getDataRequestId).collect(Collectors.toList());
         return healthInfoStatus.apply(dataRequestIds, username).collectList();
+    }
+
+    private Requester buildRequester(String patientId){
+        return Requester.builder().identifier(buildPatientIdentifier(patientId)).name(patientId).build();
+    }
+
+    private Identifier buildPatientIdentifier(String patientId){
+        return Identifier.builder().system(Constants.PATIENT_IDENTIFIER_SYSTEM).type(Constants.PATIENT_IDENTIFIER_TYPE).value(patientId).build();
     }
 }
